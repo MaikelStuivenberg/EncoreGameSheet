@@ -2,6 +2,8 @@ import 'package:encore_game_sheet/constants/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'choose_card.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({required Key key}) : super(key: key);
 
@@ -112,7 +114,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 150,
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.pop(context, 'reset');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ChooseCardPage(key: GlobalKey())),
+                      );
                     },
                     child: const Text('New Game'),
                   ),

@@ -1,5 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:encore_game_sheet/cards/default.dart';
+import 'package:encore_game_sheet/cards/level_1.dart';
+import 'package:encore_game_sheet/cards/level_2.dart';
+import 'package:encore_game_sheet/cards/level_3.dart';
 import 'package:encore_game_sheet/constants/box_colors.dart';
 import 'package:encore_game_sheet/constants/card_points.dart';
 import 'package:encore_game_sheet/constants/settings.dart';
@@ -8,6 +10,8 @@ import 'package:encore_game_sheet/pages/settings_page.dart';
 import 'package:encore_game_sheet/painters/CrossPainter.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'choose_card.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({required Key key}) : super(key: key);
@@ -23,7 +27,8 @@ class _GamePageState extends State<GamePage> {
   var highscore = true;
   var sounds = false;
 
-  var card = DefaultCard().getCard();
+  var lvl = "1";
+  var card = Level1Card().getCard();
 
   var maxBonus = 8;
   var bonusUsed = 0;
@@ -231,12 +236,20 @@ class _GamePageState extends State<GamePage> {
           color: darkMode ? Colors.white : Colors.black,
         ),
         onPressed: () {
-          Navigator.push(
+          Navigator.push<String>(
             context,
             MaterialPageRoute(
                 builder: (context) => SettingsPage(key: GlobalKey())),
           ).then((value) => {
-                if (value == 'reset') resetGame(),
+                if (value!.isNotEmpty)
+                  {
+                    setState(() {
+                      lvl = value;
+                      resetGame();
+                    }),
+                  },
+
+                // Always load the new settings (can be changed without starting a new game)
                 loadSettings(),
               });
         },
@@ -651,13 +664,20 @@ class _GamePageState extends State<GamePage> {
             ' points!'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context, 'Cancel'),
+            // TODO: Last turn should be undone
+            onPressed: () => {},
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => {
               resetGame(),
-              Navigator.pop(context, 'Ok'),
+              Navigator.push<String>(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChooseCardPage(key: GlobalKey())),
+              ).then((value) => {
+                    if (value!.isNotEmpty) {lvl = value, resetGame()}
+                  }),
             },
             child: const Text('Start new game'),
           ),
@@ -671,7 +691,18 @@ class _GamePageState extends State<GamePage> {
       bonusUsed = 0;
       manualClosedColors = [];
       manualClosedColumns = [];
-      card = DefaultCard().getCard();
+
+      switch (lvl) {
+        case "1":
+          card = Level1Card().getCard();
+          break;
+        case "2":
+          card = Level2Card().getCard();
+          break;
+        case "3":
+          card = Level3Card().getCard();
+          break;
+      }
     });
   }
 
