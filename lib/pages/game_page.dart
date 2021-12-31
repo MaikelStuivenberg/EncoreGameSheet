@@ -553,7 +553,7 @@ class _GamePageState extends State<GamePage> {
 
     setState(() {
       showScore = prefs.getBool(Settings.showCurrentPoints) ?? true;
-      darkMode = prefs.getBool(Settings.darkMode) ?? false;
+      darkMode = prefs.getBool(Settings.darkMode) ?? true;
       highscore = prefs.getBool(Settings.highscore) ?? true;
       sounds = prefs.getBool(Settings.sounds) ?? false;
 
