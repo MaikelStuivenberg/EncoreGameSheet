@@ -2,6 +2,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:encore_game_sheet/cards/level_1.dart';
 import 'package:encore_game_sheet/cards/level_2.dart';
 import 'package:encore_game_sheet/cards/level_3.dart';
+import 'package:encore_game_sheet/cards/level_4.dart';
 import 'package:encore_game_sheet/constants/box_colors.dart';
 import 'package:encore_game_sheet/constants/card_points.dart';
 import 'package:encore_game_sheet/constants/settings.dart';
@@ -664,19 +665,21 @@ class _GamePageState extends State<GamePage> {
             ' points!'),
         actions: <Widget>[
           TextButton(
-            // TODO: Last turn should be undone
-            onPressed: () => {},
+            onPressed: () => {Navigator.pop(context, "Cancel")},
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => {
-              resetGame(),
               Navigator.push<String>(
                 context,
                 MaterialPageRoute(
                     builder: (context) => ChooseCardPage(key: GlobalKey())),
               ).then((value) => {
-                    if (value!.isNotEmpty) {lvl = value, resetGame()}
+                    if (value!.isNotEmpty && value != "Cancel")
+                      {
+                        lvl = value,
+                        resetGame(),
+                      }
                   }),
             },
             child: const Text('Start new game'),
@@ -701,6 +704,9 @@ class _GamePageState extends State<GamePage> {
           break;
         case "3":
           card = Level3Card().getCard();
+          break;
+        case "4":
+          card = Level4Card().getCard();
           break;
       }
     });
