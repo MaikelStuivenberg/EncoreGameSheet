@@ -22,6 +22,7 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
     precacheImage(const AssetImage("assets/images/lvl1.jpg"), context);
     precacheImage(const AssetImage("assets/images/lvl2.jpg"), context);
     precacheImage(const AssetImage("assets/images/lvl3.jpg"), context);
+    precacheImage(const AssetImage("assets/images/lvl4.jpg"), context);
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 240, 240, 240),
@@ -44,6 +45,7 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                         levelListItem("1"),
                         levelListItem("2"),
                         levelListItem("3"),
+                        levelListItem("4"),
                       ],
                     ),
                   ),
@@ -59,7 +61,7 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                   width: 150,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context, 'Cancel');
                     },
                     child: const Text('Back'),
                   ),
