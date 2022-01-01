@@ -11,6 +11,7 @@ Current Features
 * Hide current points
 * Dark mode
 * Sound effects
+* 4 different game sheets
     
 Download
 ------------------
