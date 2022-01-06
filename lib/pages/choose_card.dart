@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 class ChooseCardPage extends StatefulWidget {
@@ -39,7 +37,8 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                       children: [
                         const Text(
                           "Choose a game card",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         levelListItem("1"),
@@ -61,7 +60,7 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                   width: 150,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context, 'Cancel');
+                      Navigator.pop(context, ['Cancel']);
                     },
                     child: const Text('Back'),
                   ),
@@ -70,11 +69,18 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                   width: 150,
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.of(context)
-                        ..pop(_lvl)
-                        ..pop(_lvl);
+                      Navigator.of(context).pop([_lvl, 'multi']);
                     },
-                    child: const Text('Start'),
+                    child: const Text('Start Game'),
+                  ),
+                ),
+                SizedBox(
+                  width: 150,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop([_lvl, 'single']);
+                    },
+                    child: const Text('Start Solo Mode'),
                   ),
                 ),
               ],

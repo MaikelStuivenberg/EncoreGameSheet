@@ -105,7 +105,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 150,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context, 'resume');
+                      Navigator.pop(context, ['resume']);
                     },
                     child: const Text('Back'),
                   ),
@@ -114,12 +114,15 @@ class _SettingsPageState extends State<SettingsPage> {
                   width: 150,
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.push<List<String>>(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
                                 ChooseCardPage(key: GlobalKey())),
-                      );
+                      ).then((value) => {
+                            if (value![0] != "Cancel")
+                              Navigator.pop(context, value)
+                          });
                     },
                     child: const Text('New Game'),
                   ),
