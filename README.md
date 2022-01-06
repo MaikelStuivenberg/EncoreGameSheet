@@ -12,6 +12,7 @@ Current Features
 * Dark mode
 * Sound effects
 * 4 different game sheets
+* Solo Mode
     
 Download
 ------------------
