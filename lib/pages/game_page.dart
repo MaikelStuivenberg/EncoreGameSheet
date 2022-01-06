@@ -8,7 +8,8 @@ import 'package:encore_game_sheet/constants/card_points.dart';
 import 'package:encore_game_sheet/constants/settings.dart';
 import 'package:encore_game_sheet/models/box_color.dart';
 import 'package:encore_game_sheet/pages/settings_page.dart';
-import 'package:encore_game_sheet/painters/CrossPainter.dart';
+import 'package:encore_game_sheet/painters/crossPainter.dart';
+import 'package:encore_game_sheet/painters/slashPainter.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,20 +23,26 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  // Settings (with default values, async loaded)
+  // UI Settings (with default values, async loaded)
   var showScore = true;
   var darkMode = true;
   var highscore = true;
   var sounds = false;
 
+  // Game settings
   var lvl = "1";
+  var singlePlayerMode = false;
   var card = Level1Card().getCard();
 
+  // Gameplay variables
   var maxBonus = 8;
   var bonusUsed = 0;
-
   var manualClosedColumns = [];
   var manualClosedColors = [];
+
+  // Single player mode variables
+  var turnCount = 0;
+  var partlyClosedColumns = [];
 
   @override
   void initState() {
@@ -237,15 +244,16 @@ class _GamePageState extends State<GamePage> {
           color: darkMode ? Colors.white : Colors.black,
         ),
         onPressed: () {
-          Navigator.push<String>(
+          Navigator.push<List<String>>(
             context,
             MaterialPageRoute(
                 builder: (context) => SettingsPage(key: GlobalKey())),
           ).then((value) => {
-                if (value!.isNotEmpty)
+                if (value!.isNotEmpty && value[0] != "resume")
                   {
                     setState(() {
-                      lvl = value;
+                      lvl = value[0];
+                      singlePlayerMode = value[1] == "single" ? true : false;
                       resetGame();
                     }),
                   },
@@ -271,8 +279,9 @@ class _GamePageState extends State<GamePage> {
               !manualClosedColors.contains(color) && isBoxColorClosed(color),
               "5", () {
             setState(() {
-              playClickSound();
+              if (singlePlayerMode) return;
 
+              playClickSound();
               if (manualClosedColors.contains(color)) {
                 manualClosedColors.remove(color);
               } else {
@@ -351,19 +360,38 @@ class _GamePageState extends State<GamePage> {
         Row(
           children: [
             for (var i = 0; i < list.length; i++)
-              showBox(list[i], list[i] == "H", false,
-                  manualClosedColumns.contains(i) || isColumnFinished(i), () {
+              showBox(
+                  list[i],
+                  list[i] == "H",
+                  false,
+                  partlyClosedColumns.contains(i),
+                  manualClosedColumns.contains(i) || (!singlePlayerMode && isColumnFinished(i)), () {
                 setState(() {
-                  if (isColumnFinished(i)) {
+                  if (!singlePlayerMode && isColumnFinished(i)) {
                     return;
                   }
 
                   playClickSound();
 
-                  if (manualClosedColumns.contains(i)) {
-                    manualClosedColumns.remove(i);
+                  if (singlePlayerMode) {
+                    if (!partlyClosedColumns.contains(i)) {
+                      partlyClosedColumns.add(i);
+                    } else if (!manualClosedColumns.contains(i)) {
+                      manualClosedColumns.add(i);
+
+                      if (checkIfGameIsFinished()) {
+                        gameFinished();
+                      }
+                    } else {
+                      partlyClosedColumns.remove(i);
+                      manualClosedColumns.remove(i);
+                    }
                   } else {
-                    manualClosedColumns.add(i);
+                    if (manualClosedColumns.contains(i)) {
+                      manualClosedColumns.remove(i);
+                    } else if (!singlePlayerMode) {
+                      manualClosedColumns.add(i);
+                    }
                   }
                 });
               })
@@ -418,7 +446,8 @@ class _GamePageState extends State<GamePage> {
           children: [
             for (var i = 0; i < CardPoints.first.length; i++)
               showBox(
-                  (manualClosedColumns.contains(i)
+                  // Show always the first row in single player mode
+                  (manualClosedColumns.contains(i) && !singlePlayerMode
                           ? CardPoints.second[i]
                           : CardPoints.first[i])
                       .toString(),
@@ -432,7 +461,11 @@ class _GamePageState extends State<GamePage> {
   }
 
   Widget showBox(String text,
-      [bool highlight = false, circle = false, checked = false, onTap]) {
+      [bool highlight = false,
+      circle = false,
+      slashed = false,
+      checked = false,
+      onTap]) {
     return GestureDetector(
       child: Container(
         margin: const EdgeInsets.fromLTRB(1.5, 1.5, 1.5, 1.5),
@@ -468,12 +501,15 @@ class _GamePageState extends State<GamePage> {
                   fontSize: circle ? 16 : 20,
                 ),
               ),
-              checked
+              checked || slashed
                   ? CustomPaint(
                       size: Size(
                           getDefaultBoxSize() - 3, getDefaultBoxSize() - 3),
-                      painter: CrossPainter(
-                          color: darkMode ? Colors.white : Colors.black),
+                      painter: checked
+                          ? CrossPainter(
+                              color: darkMode ? Colors.white : Colors.black)
+                          : SlashPainter(
+                              color: darkMode ? Colors.white : Colors.black),
                     )
                   : const Text(""),
             ],
@@ -585,9 +621,10 @@ class _GamePageState extends State<GamePage> {
     for (int i = 0; i < CardPoints.first.length; i++) {
       if (!card.every((row) => row[i].checked)) continue;
 
-      if (manualClosedColumns.contains(i)) {
+      if (manualClosedColumns.contains(i) && !singlePlayerMode) {
         points += CardPoints.second[i];
       } else {
+        // Use also these points in single player mode
         points += CardPoints.first[i];
       }
     }
@@ -643,6 +680,10 @@ class _GamePageState extends State<GamePage> {
   }
 
   bool checkIfGameIsFinished() {
+    if (singlePlayerMode) {
+      return manualClosedColumns.length == 15;
+    }
+
     var closedCount = 0;
     if (isBoxColorClosed(BoxColors.greenBox)) closedCount++;
     if (isBoxColorClosed(BoxColors.yellowBox)) closedCount++;
@@ -665,20 +706,24 @@ class _GamePageState extends State<GamePage> {
             ' points!'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => {Navigator.pop(context, "Cancel")},
+            onPressed: () => {
+              Navigator.pop(context, "Cancel")
+            },
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () => {
-              Navigator.push<String>(
+              Navigator.push<List<String>>(
                 context,
                 MaterialPageRoute(
                     builder: (context) => ChooseCardPage(key: GlobalKey())),
               ).then((value) => {
-                    if (value!.isNotEmpty && value != "Cancel")
+                    if (value![0] != "Cancel")
                       {
-                        lvl = value,
+                        lvl = value[0],
+                        singlePlayerMode = value[1] == "single" ? true : false,
                         resetGame(),
+                        Navigator.pop(context, "Ok")
                       }
                   }),
             },
@@ -694,6 +739,7 @@ class _GamePageState extends State<GamePage> {
       bonusUsed = 0;
       manualClosedColors = [];
       manualClosedColumns = [];
+      partlyClosedColumns = [];
 
       switch (lvl) {
         case "1":
