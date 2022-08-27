@@ -4,6 +4,8 @@ import 'package:encore_game_sheet/cards/level_2.dart';
 import 'package:encore_game_sheet/cards/level_3.dart';
 import 'package:encore_game_sheet/cards/level_4.dart';
 import 'package:encore_game_sheet/cards/level_5.dart';
+import 'package:encore_game_sheet/cards/level_6.dart';
+import 'package:encore_game_sheet/cards/level_7.dart';
 import 'package:encore_game_sheet/constants/box_colors.dart';
 import 'package:encore_game_sheet/constants/card_points.dart';
 import 'package:encore_game_sheet/constants/settings.dart';
@@ -755,6 +757,12 @@ class _GamePageState extends State<GamePage> {
           break;
         case "5":
           card = Level5Card().getCard();
+          break;
+        case "6":
+          card = Level6Card().getCard();
+          break;
+        case "7":
+          card = Level7Card().getCard();
           break;
       }
     });
