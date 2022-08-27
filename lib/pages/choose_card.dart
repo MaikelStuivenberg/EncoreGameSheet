@@ -45,11 +45,12 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                         levelListItem("2"),
                         levelListItem("3"),
                         levelListItem("4"),
+                        levelListItem("5"),
                       ],
                     ),
                   ),
                   Expanded(
-                      child: Image.asset("assets/images/lvl" + _lvl + ".jpg")),
+                      child: Image.asset("assets/images/lvl$_lvl.jpg")),
                 ],
               ),
             ),
@@ -93,7 +94,7 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
 
   Widget levelListItem(String lvl) {
     return ListTile(
-      title: Text("Level " + lvl),
+      title: Text("Level $lvl"),
       leading: Radio(
         value: lvl,
         groupValue: _lvl,

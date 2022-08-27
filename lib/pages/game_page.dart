@@ -3,6 +3,7 @@ import 'package:encore_game_sheet/cards/level_1.dart';
 import 'package:encore_game_sheet/cards/level_2.dart';
 import 'package:encore_game_sheet/cards/level_3.dart';
 import 'package:encore_game_sheet/cards/level_4.dart';
+import 'package:encore_game_sheet/cards/level_5.dart';
 import 'package:encore_game_sheet/constants/box_colors.dart';
 import 'package:encore_game_sheet/constants/card_points.dart';
 import 'package:encore_game_sheet/constants/settings.dart';
@@ -356,6 +357,7 @@ class _GamePageState extends State<GamePage> {
     ];
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
@@ -398,12 +400,12 @@ class _GamePageState extends State<GamePage> {
           ],
         ),
       ],
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
     );
   }
 
   Widget showPlayField() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (var i = 0; i < card.length; i++)
           Row(
@@ -435,12 +437,12 @@ class _GamePageState extends State<GamePage> {
             ],
           ),
       ],
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
     );
   }
 
   Widget showScoreRow() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
@@ -456,7 +458,6 @@ class _GamePageState extends State<GamePage> {
           ],
         ),
       ],
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
     );
   }
 
@@ -467,6 +468,7 @@ class _GamePageState extends State<GamePage> {
       checked = false,
       onTap]) {
     return GestureDetector(
+      onTap: onTap,
       child: Container(
         margin: const EdgeInsets.fromLTRB(1.5, 1.5, 1.5, 1.5),
         width: getDefaultBoxSize() - 3,
@@ -516,7 +518,6 @@ class _GamePageState extends State<GamePage> {
           ),
         ),
       ),
-      onTap: onTap,
     );
   }
 
@@ -576,6 +577,7 @@ class _GamePageState extends State<GamePage> {
     }
 
     return GestureDetector(
+        onTap: onTap,
         child: Container(
           width: getDefaultBoxSize(),
           height: getDefaultBoxSize(),
@@ -588,8 +590,7 @@ class _GamePageState extends State<GamePage> {
           child: Center(
             child: content,
           ),
-        ),
-        onTap: onTap);
+        ));
   }
 
   double getDefaultBoxSize() {
@@ -701,9 +702,7 @@ class _GamePageState extends State<GamePage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Finished!'),
-        content: Text('You finished the game with ' +
-            calcTotalPoints().toString() +
-            ' points!'),
+        content: Text('You finished the game with ${calcTotalPoints()} points!'),
         actions: <Widget>[
           TextButton(
             onPressed: () => {
@@ -753,6 +752,9 @@ class _GamePageState extends State<GamePage> {
           break;
         case "4":
           card = Level4Card().getCard();
+          break;
+        case "5":
+          card = Level5Card().getCard();
           break;
       }
     });
