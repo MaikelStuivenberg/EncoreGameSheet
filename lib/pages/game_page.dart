@@ -11,8 +11,8 @@ import 'package:encore_game_sheet/constants/card_points.dart';
 import 'package:encore_game_sheet/constants/settings.dart';
 import 'package:encore_game_sheet/models/box_color.dart';
 import 'package:encore_game_sheet/pages/settings_page.dart';
-import 'package:encore_game_sheet/painters/crossPainter.dart';
-import 'package:encore_game_sheet/painters/slashPainter.dart';
+import 'package:encore_game_sheet/painters/cross_painter.dart';
+import 'package:encore_game_sheet/painters/slash_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
