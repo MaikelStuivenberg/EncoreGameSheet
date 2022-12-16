@@ -70,15 +70,13 @@ jobs:
       - name: Build IPA
         run: flutter build ipa
 
-      - name: Set Apple Auth key
-        run: bundle exec fastlane distribute --api_key "${{ secrets.APPLE_API_KEY }}"
-
       - name: Release to Apple Dev (beta)
-        env:
-          SUPPLY_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
-          SUPPLY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+        # env:
+          # SUPPLY_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+          # SUPPLY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
         run: |
           bundle exec fastlane deliver \
           --ipa build/ios/ipa/encore_game_sheet.ipa \
-          --submit_for_review
-          --automatic_release
+          --submit_for_review \
+          --automatic_release \
+          --api_key "${{ secrets.APPLE_API_KEY }}
