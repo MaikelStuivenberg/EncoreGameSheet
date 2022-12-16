@@ -7,9 +7,9 @@ on:
   #   branches: ["main"]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  build-ios: 
+    name: Build Flutter iOS
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
 
@@ -38,33 +38,18 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Decode android/neumodore_key.jks
-        run: echo "${{ secrets.KEYSTORE_JKS }}" | base64 --decode > android/keystore.jks
+      - name: Build IPA
+        run: flutter build ipa
 
-      - name: Decode android/key.properties
-        run: echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
+      - name: Set Apple Auth key
+        run: bundle exec fastlane distribute --api_key "${{ secrets.APPLE_API_KEY }}"
 
-      - name: Build App Bundle
-        run: flutter build appbundle
-
-      - name: Cache bundle dependencies
-        uses: actions/cache@v3
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
-      - name: Download bundle dependencies
-        run: |
-          gem install bundler:2.0.2
-          bundle config path vendor/bundle
-          bundle install
-
-      - name: Release to Google Play (beta)
+      - name: Release to Apple Dev (beta)
         env:
           SUPPLY_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
           SUPPLY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
         run: |
-          bundle exec fastlane supply \
-          --aab build/app/outputs/bundle/release/app-release.aab \
-          --track beta
+          bundle exec fastlane deliver \
+          --ipa build/ios/ipa/encore_game_sheet.ipa \
+          --submit_for_review
+          --automatic_release
