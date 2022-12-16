@@ -28,7 +28,7 @@ jobs:
       - name: Cache pub dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ env.FLUTTER_HOME }}/.pub-cache
+          path: ${{ env.PUB_CACHE }}
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: ${{ runner.os }}-pub-
 
@@ -59,6 +59,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
+          bundler-cache: true
 
       - name: Cache bundle dependencies
         uses: actions/cache@v3
