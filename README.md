@@ -1,3 +1,6 @@
+[![Android Build](https://github.com/MaikelStuivenberg/EncoreGameSheet/actions/workflows/android-release.yml/badge.svg)](https://github.com/MaikelStuivenberg/EncoreGameSheet/actions/workflows/android-release.yml)
+[![iOS Build](https://github.com/MaikelStuivenberg/EncoreGameSheet/actions/workflows/ios-release.yml/badge.svg)](https://github.com/MaikelStuivenberg/EncoreGameSheet/actions/workflows/ios-release.yml)
+
 Encore Game Sheet (Android / iOS app)
 ==================
 
