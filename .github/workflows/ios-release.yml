@@ -72,7 +72,7 @@ jobs:
       #     cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
           
       - name: Apple Developer Login
-        run: bundle exec fastlane fastlane-credentials add --username FASTLANE_USER --password FASTLANE_PASSWORD
+        run: bundle exec fastlane fastlane-credentials add --username FASTLANE_USER --password FASTLANE_PASSWORD 
 
       - name: Download Xcode Profiles
         run: bundle exec fastlane sigh download_all
