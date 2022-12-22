@@ -79,4 +79,4 @@ jobs:
           --ipa build/ios/ipa/encore_game_sheet.ipa \
           --submit_for_review \
           --automatic_release \
-          --api_key "${{ secrets.APPLE_API_KEY }}
+          --api_key "${{ secrets.APPLE_API_KEY }}"
