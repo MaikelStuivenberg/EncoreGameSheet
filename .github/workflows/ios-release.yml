@@ -2,6 +2,7 @@ name: iOS Build & Release
 
 on:
   push:
+  workflow_dispatch:
   #   branches: ["main"]
   # pull_request:
   #   branches: ["main"]
@@ -71,9 +72,6 @@ jobs:
         run: flutter build ipa
 
       - name: Release to Apple Dev (beta)
-        # env:
-          # SUPPLY_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
-          # SUPPLY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
         run: |
           bundle exec fastlane deliver \
           --ipa build/ios/ipa/encore_game_sheet.ipa \
