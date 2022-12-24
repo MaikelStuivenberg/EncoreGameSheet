@@ -73,3 +73,6 @@ key.properties
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# others
+fastlane_ios_key.json
