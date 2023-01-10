@@ -7,5 +7,7 @@ class BoxColor {
   Color dmColor;
   Color cmColorText;
 
-  BoxColor(this.color, this.colorText, this.dmColor, this.cmColorText);
+  String textValue;
+
+  BoxColor(this.color, this.colorText, this.dmColor, this.cmColorText, this.textValue);
 }

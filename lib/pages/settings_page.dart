@@ -16,6 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _useDarkMode = true;
   bool _useHighscore = true;
   bool _useSounds = false;
+  bool _useColorblind = false;
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _useDarkMode = prefs.getBool(Settings.darkMode) ?? true;
       _useHighscore = prefs.getBool(Settings.highscore) ?? true;
       _useSounds = prefs.getBool(Settings.sounds) ?? false;
+      _useColorblind = prefs.getBool(Settings.colorblind) ?? false;
     });
   }
 
@@ -96,6 +98,20 @@ class _SettingsPageState extends State<SettingsPage> {
 
                   final prefs = await SharedPreferences.getInstance();
                   prefs.setBool(Settings.sounds, val);
+                }),
+
+            // SOUNDS
+            SwitchListTile(
+                value: _useColorblind,
+                title: const Text("Use colorblind mode"),
+                secondary: const Icon(Icons.color_lens),
+                onChanged: (val) async {
+                  setState(() {
+                    _useColorblind = val;
+                  });
+
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.setBool(Settings.colorblind, val);
                 }),
 
             Row(
