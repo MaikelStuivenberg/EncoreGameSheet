@@ -31,6 +31,7 @@ class _GamePageState extends State<GamePage> {
   var darkMode = true;
   var highscore = true;
   var sounds = false;
+  var colorblind = false;
 
   // Game settings
   var lvl = "1";
@@ -280,6 +281,7 @@ class _GamePageState extends State<GamePage> {
               false,
               manualClosedColors.contains(color),
               !manualClosedColors.contains(color) && isBoxColorClosed(color),
+              false,
               "5", () {
             setState(() {
               if (singlePlayerMode) return;
@@ -298,6 +300,7 @@ class _GamePageState extends State<GamePage> {
               false,
               false,
               manualClosedColors.contains(color) && isBoxColorClosed(color),
+              false,
               "3")
         ],
       ),
@@ -369,7 +372,8 @@ class _GamePageState extends State<GamePage> {
                   list[i] == "H",
                   false,
                   partlyClosedColumns.contains(i),
-                  manualClosedColumns.contains(i) || (!singlePlayerMode && isColumnFinished(i)), () {
+                  manualClosedColumns.contains(i) ||
+                      (!singlePlayerMode && isColumnFinished(i)), () {
                 setState(() {
                   if (!singlePlayerMode && isColumnFinished(i)) {
                     return;
@@ -413,8 +417,14 @@ class _GamePageState extends State<GamePage> {
           Row(
             children: [
               for (var j = 0; j < card[i].length; j++)
-                showColoredBox(card[i][j].color, j == 7, card[i][j].star,
-                    card[i][j].checked, false, "", () {
+                showColoredBox(
+                    card[i][j].color,
+                    j == 7,
+                    card[i][j].star,
+                    card[i][j].checked,
+                    false,
+                    colorblind,
+                    colorblind ? card[i][j].color.textValue : "", () {
                   setState(() {
                     // Check if allowed
                     // One of TRBL-boxes should be crossed already
@@ -528,14 +538,15 @@ class _GamePageState extends State<GamePage> {
       bool showStar = false,
       bool checked = false,
       bool circle = false,
+      bool smallTxt = false,
       String text = "",
       onTap]) {
     Widget content = Opacity(
-      opacity: 0.3,
+      opacity: 0.4,
       child: Text(
         text,
         style: TextStyle(
-          color: darkMode && !circle ? Colors.white : Colors.black,
+          color: darkMode ? Colors.black : Colors.white,
           fontWeight: FontWeight.bold,
           fontSize: circle ? 14 : 20,
         ),
@@ -543,13 +554,18 @@ class _GamePageState extends State<GamePage> {
     );
 
     if (showStar) {
-      content = Opacity(
+      var star = Opacity(
         opacity: 0.8,
         child: Icon(
           showStar ? Icons.star : null,
           color: color.colorText,
         ),
       );
+
+      if (text.isNotEmpty)
+        content = Stack(alignment: Alignment.center, children: [star, content]);
+      else
+        content = star;
     }
 
     if (checked) {
@@ -560,12 +576,13 @@ class _GamePageState extends State<GamePage> {
           painter: CrossPainter(color: Colors.black),
         ),
       );
-      if (showStar) {
-        content =
-            Stack(alignment: Alignment.center, children: [content, opWidget]);
-      } else {
-        content = opWidget;
-      }
+
+      // if (showStar) {
+      content =
+          Stack(alignment: Alignment.center, children: [content, opWidget]);
+      // } else {
+      //   content = opWidget;
+      // }
     }
 
     if (circle) {
@@ -609,6 +626,7 @@ class _GamePageState extends State<GamePage> {
       darkMode = prefs.getBool(Settings.darkMode) ?? true;
       highscore = prefs.getBool(Settings.highscore) ?? true;
       sounds = prefs.getBool(Settings.sounds) ?? false;
+      colorblind = prefs.getBool(Settings.colorblind) ?? false;
 
       // currentHighscore = prefs.getInt(CURRENT_HIGHSCORE);
     });
@@ -704,12 +722,11 @@ class _GamePageState extends State<GamePage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Finished!'),
-        content: Text('You finished the game with ${calcTotalPoints()} points!'),
+        content:
+            Text('You finished the game with ${calcTotalPoints()} points!'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => {
-              Navigator.pop(context, "Cancel")
-            },
+            onPressed: () => {Navigator.pop(context, "Cancel")},
             child: const Text('Cancel'),
           ),
           TextButton(

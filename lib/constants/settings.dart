@@ -5,4 +5,5 @@ class Settings {
   static const String darkMode = "dark_mode";
   static const String highscore = "highscore";
   static const String sounds = "sounds";
+  static const String colorblind = "colorblind";
 }
