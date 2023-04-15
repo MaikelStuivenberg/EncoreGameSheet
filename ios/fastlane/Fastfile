@@ -13,9 +13,9 @@
 default_platform(:ios)
 
 platform :ios do
-  git_url = "https://github.com/MaikelStuivenberg/fastlane-certs.git"
+  git_url = "git@github.com:MaikelStuivenberg/fastlane-certs.git"
   lane :certificates do
-    match(type: "appstore", app_identifier: "nl.maikelstuivenberg.encore", git_url: git_url, git_bearer_authorization: ENV['GITHUB_API_TOKEN'], force: true)
+    match(type: "appstore", app_identifier: "nl.maikelstuivenberg.encore", git_url: git_url, force: true)
   end
 
   desc "Push a new build to Testflight"
