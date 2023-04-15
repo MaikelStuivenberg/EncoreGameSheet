@@ -27,8 +27,8 @@ platform :ios do
     setup_ci
     sync_code_signing(type: "appstore", readonly: true, app_identifier: app_identifier, git_url: git_url)
     api_key = app_store_connect_api_key(
-        key_id: "C69673W982",
-        issuer_id: "59a5fc69-634a-448d-9d19-ad1a6d7be299",
+        key_id: "5NQZWPZTZ6",
+        issuer_id: "4e0ec32d-0172-407c-8283-eb6189c48304",
         key_content: ENV['APPSTORECONNECT_PRIVATE_KEY']
     )
     build_number = latest_testflight_build_number(api_key: api_key, app_identifier: app_identifier) + 1
