@@ -1,90 +1,92 @@
-# name: iOS Build & Release
+name: iOS Build & Release
 
-# on:
-#   push:
-#   workflow_dispatch:
-#   #   branches: ["main"]
-#   # pull_request:
-#   #   branches: ["main"]
+on:
+  push:
+  # workflow_dispatch:
+  #   branches: ["main"]
+  # pull_request:
+  #   branches: ["main"]
 
-# jobs:
-#   build-ios: 
-#     name: Build Flutter iOS
-#     runs-on: macos-latest
-#     env:
-#       FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-#       FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-#       FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APP_PASSWORD }}
-#     steps:
-#       - uses: actions/checkout@v3
+jobs:
+  build-ios: 
+    name: Build Flutter iOS
+    runs-on: macos-latest
+    env:
+      FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+      FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APP_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v3
 
-#       - uses: actions/setup-java@v3
-#         with:
-#           distribution: "zulu"
-#           java-version: "12.x"
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "12.x"
 
-#       - name: Setup Ruby
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: "3.0"
-#           bundler-cache: true
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
 
-#       - uses: subosito/flutter-action@v2
-#         with:
-#           channel: "stable"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
 
-#       - name: Cache pub dependencies
-#         uses: actions/cache@v3
-#         with:
-#           path: ${{ env.PUB_CACHE }}
-#           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-#           restore-keys: ${{ runner.os }}-pub-
+      - name: Cache pub dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.PUB_CACHE }}
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: ${{ runner.os }}-pub-
 
-#       - name: Get dependencies
-#         run: flutter pub get
+      - name: Get dependencies
+        run: flutter pub get
 
-#       # - name: Install the Apple certificate and provisioning profile
-#       #   env:
-#       #     BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-#       #     P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-#       #     BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
-#       #     KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-#       #   run: |
-#       #     # create variables
-#       #     CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-#       #     PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-#       #     KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+      # - name: Install the Apple certificate and provisioning profile
+      #   env:
+      #     BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+      #     P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+      #     BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
+      #     KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      #   run: |
+      #     # create variables
+      #     CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+      #     PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+      #     KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-#       #     # import certificate and provisioning profile from secrets
-#       #     echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
-#       #     echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode --output $PP_PATH
+      #     # import certificate and provisioning profile from secrets
+      #     echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
+      #     echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode --output $PP_PATH
 
-#       #     # create temporary keychain
-#       #     security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-#       #     security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-#       #     security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+      #     # create temporary keychain
+      #     security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+      #     security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+      #     security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
 
-#       #     # import certificate to keychain
-#       #     security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-#       #     security list-keychain -d user -s $KEYCHAIN_PATH
+      #     # import certificate to keychain
+      #     security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+      #     security list-keychain -d user -s $KEYCHAIN_PATH
 
-#       #     # apply provisioning profile
-#       #     mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-#       #     cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      #     # apply provisioning profile
+      #     mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+      #     cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
           
-#       - name: Apple Developer Login
-#         run: bundle exec fastlane fastlane-credentials add --username FASTLANE_USER --password FASTLANE_PASSWORD 
+      - name: Apple Developer Login
+        run: bundle exec fastlane fastlane-credentials add --username FASTLANE_USER --password FASTLANE_PASSWORD 
 
-#       - name: Download Xcode Profiles
-#         run: bundle exec fastlane sigh download_all
+      - name: Download Xcode Profiles
+        run: bundle exec fastlane sigh download_all
 
-#       - name: Build IPA
-#         run: flutter build ipa
+      - name: Build IPA
+        run: flutter build ipa
 
-#       - name: Release to Apple Dev (beta)
-#         run: |
-#           bundle exec fastlane deliver \
-#           --ipa build/ios/ipa/encore_game_sheet.ipa \
-#           --submit_for_review \
-#           --automatic_release \
-#           --api_key "${{ secrets.APPLE_API_KEY }}"
+      - name: Release to Apple Dev (beta)
+        run: |
+          bundle exec fastlane deliver \
+          --ipa build/ios/ipa/encore_game_sheet.ipa \
+          --api_key "${{ secrets.APPLE_API_KEY }}"
+
+
+        # --submit_for_review \
+        #  --automatic_release \
