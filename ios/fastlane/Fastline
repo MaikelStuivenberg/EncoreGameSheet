@@ -1,0 +1,53 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+default_platform(:ios)
+
+platform :ios do
+  git_url = "git@github.com:MaikelStuivenberg/fastlane-certs.git"
+  lane :certificates do
+    match(type: "appstore", app_identifier: "nl.maikelstuivenberg.encore", git_url: git_url, force: true)
+  end
+
+  desc "Push a new build to Testflight"
+  lane :release do
+    if git_branch == "main"
+      app_identifier = "nl.maikelstuivenberg.encore-gamesheet"
+      flavor = "production"
+    end
+    setup_ci
+    sync_code_signing(type: "appstore", readonly: true, app_identifier: app_identifier, git_url: git_url)
+    api_key = app_store_connect_api_key(
+        key_id: "C69673W982",
+        issuer_id: "59a5fc69-634a-448d-9d19-ad1a6d7be299",
+        key_content: ENV['APPSTORECONNECT_PRIVATE_KEY']
+    )
+    build_number = latest_testflight_build_number(api_key: api_key, app_identifier: app_identifier) + 1
+    Dir.chdir "../.." do
+        sh("flutter", "packages", "get")
+        sh("flutter", "clean")
+        sh("flutter", "build", "ipa", "--flavor", flavor, "--target", "lib/main_#{flavor}.dart", "--build-number=#{build_number}")
+    end
+    build_app(
+      scheme: flavor,
+      skip_build_archive: true, 
+      include_symbols: true, 
+      archive_path: "../build/ios/archive/Runner.xcarchive"
+    )
+    dsym_zip
+    upload_to_testflight(
+      app_identifier: app_identifier,
+      api_key: api_key,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end
