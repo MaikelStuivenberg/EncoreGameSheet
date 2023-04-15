@@ -16,6 +16,7 @@ platform :ios do
   git_url = "git@github.com:MaikelStuivenberg/fastlane-certs.git"
   lane :certificates do
     match(type: "appstore", app_identifier: "nl.maikelstuivenberg.encore", git_url: git_url, force: true)
+    match(type: "development", app_identifier: "nl.maikelstuivenberg.encore", git_url: git_url, force: true)
   end
 
   desc "Push a new build to Testflight"
@@ -35,7 +36,6 @@ platform :ios do
         sh("flutter", "build", "ipa", "--target", "lib/main.dart", "--build-number=#{build_number}")
     end
     build_app(
-      scheme: "EncoreGameSheet",
       skip_build_archive: true, 
       include_symbols: true, 
       archive_path: "../build/ios/archive/Runner.xcarchive"
