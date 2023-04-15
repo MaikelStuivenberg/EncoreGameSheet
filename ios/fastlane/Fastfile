@@ -19,7 +19,7 @@ platform :ios do
   end
 
   desc "Push a new build to Testflight"
-  lane :release documentation
+  lane :release do
     app_identifier = "nl.maikelstuivenberg.encore-gamesheet"
     setup_ci
     sync_code_signing(type: "appstore", readonly: true, app_identifier: app_identifier, git_url: git_url)
@@ -35,7 +35,7 @@ platform :ios do
         sh("flutter", "build", "ipa", "--target", "lib/main.dart", "--build-number=#{build_number}")
     end
     build_app(
-      scheme: "Release",
+      scheme: "EncoreGameSheet",
       skip_build_archive: true, 
       include_symbols: true, 
       archive_path: "../build/ios/archive/Runner.xcarchive"
