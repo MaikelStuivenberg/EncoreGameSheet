@@ -40,4 +40,4 @@ jobs:
         env: 
           MATCH_PASSWORD: ${{ secrets.FASTLANE_APP_PASSWORD }}
           APPSTORECONNECT_PRIVATE_KEY: ${{ secrets.APPLE_API_KEY }}
-          GITHUB_API_TOKEN: ${{ github.token }}
+          GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
