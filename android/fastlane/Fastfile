@@ -29,7 +29,7 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :build_and_deploy do
     package_name = "nl.maikelstuivenberg.encore_gamesheet"
-    build_number = google_play_track_version_codes(package_name: package_name, track: "internal", json_key_data: ENV['GOOGLE_PLAY_JSON_KEY_DATA'])[0] + 1
+    build_number = google_play_track_version_codes(package_name: package_name, track: "production", json_key_data: ENV['GOOGLE_PLAY_JSON_KEY_DATA'])[0] + 1
     Dir.chdir "../.." do
         sh("flutter", "packages", "get")
         sh("flutter", "clean")
@@ -45,6 +45,6 @@ platform :android do
                         json_key_data: ENV['GOOGLE_PLAY_JSON_KEY_DATA'], 
                         aab: signed_aab_path,
                         release_status: "completed",
-                        track: "internal")
+                        track: "production")
   end
 end
