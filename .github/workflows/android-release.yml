@@ -3,7 +3,6 @@ name: Android Build & Release
 on:
   push:
   workflow_dispatch:
-    branches: ["main"]
   pull_request:
     branches: ["main"]
 
