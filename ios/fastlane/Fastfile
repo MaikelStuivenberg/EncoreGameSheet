@@ -16,7 +16,6 @@ platform :ios do
   git_url = "git@github.com:MaikelStuivenberg/fastlane-certs.git"
   lane :certificates do
     match(type: "appstore", app_identifier: "nl.maikelstuivenberg.encore-gamesheet", git_url: git_url, force: true)
-    match(type: "development", app_identifier: "nl.maikelstuivenberg.encore-gamesheet", git_url: git_url, force: true)
   end
 
   desc "Push a new build to Testflight"
