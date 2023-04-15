@@ -2,7 +2,6 @@ name: Build and sign iOS
 
 on:
   push:
-  workflow_dispatch:
   pull_request:
     branches: ["main"]
 
