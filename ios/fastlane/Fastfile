@@ -46,6 +46,12 @@ platform :ios do
       submit_for_review: true,
       automatic_release: true,
       force: true,
+      precheck_include_in_app_purchases: false,
+      release_notes({
+        'default': 'We made the gamesheet a little bit better 🎲',
+        'nl-NL': 'We made the gamesheet a little bit better 🎲',
+        'de-DE': 'We made the gamesheet a little bit better 🎲',
+      })
     )
   end
 end
