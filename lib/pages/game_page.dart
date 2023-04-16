@@ -51,6 +51,7 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
+    loadSettings();
   }
 
   @override
@@ -498,9 +499,9 @@ class _GamePageState extends State<GamePage> {
             alignment: Alignment.center,
             children: [
               circle
-                  ? const Icon(
+                  ? Icon(
                       Icons.circle_outlined,
-                      color: Colors.white,
+                      color: darkMode ? Colors.white : Colors.black,
                     )
                   : const Text(""),
               Text(
@@ -558,7 +559,7 @@ class _GamePageState extends State<GamePage> {
         opacity: 0.8,
         child: Icon(
           showStar ? Icons.star : null,
-          color: color.colorText,
+          color: darkMode ? color.colorText : color.dmColorText,
         ),
       );
 
