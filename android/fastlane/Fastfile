@@ -47,7 +47,7 @@ platform :android do
     upload_to_play_store(
                         package_name: package_name,
                         json_key_data: ENV['GOOGLE_PLAY_JSON_KEY_DATA'], 
-                        aab: signed_aab_path,
+                        aab: "../build/app/outputs/bundle/Release/app-release-signed.aab",
                         release_status: "completed",
                         track: "production")
   end
