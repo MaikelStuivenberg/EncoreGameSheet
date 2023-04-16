@@ -1,70 +1,38 @@
-# name: Android Build & Release
+name: Android Build & Release
 
-# on:
-#   push:
-#   #   branches: ["main"]
-#   # pull_request:
-#   #   branches: ["main"]
+on:
+  pull_request:
+    branches: ["main"]
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build-ios: 
+    name: Build Flutter Android
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1.118.0
+        with: 
+          ruby-version: '3.0'
+          bundler-cache: true
+        
+      - name: Auth codesigning
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: "${{ secrets.SSH_PRIVATE_KEY }}"
 
-#     steps:
-#       - uses: actions/checkout@v3
-
-#       - uses: actions/setup-java@v3
-#         with:
-#           distribution: "zulu"
-#           java-version: "12.x"
-
-#       - name: Setup Ruby
-#         uses: ruby/setup-ruby@v1
-#         with:
-#           ruby-version: "3.0"
-#           bundler-cache: true
-
-#       - uses: subosito/flutter-action@v2
-#         with:
-#           channel: "stable"
-
-#       - name: Cache pub dependencies
-#         uses: actions/cache@v3
-#         with:
-#           path: ${{ env.PUB_CACHE }}
-#           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-#           restore-keys: ${{ runner.os }}-pub-
-
-#       - name: Get dependencies
-#         run: flutter pub get
-
-#       - name: Decode android/neumodore_key.jks
-#         run: echo "${{ secrets.KEYSTORE_JKS }}" | base64 --decode > android/keystore.jks
-
-#       - name: Decode android/key.properties
-#         run: echo "${{ secrets.KEY_PROPERTIES }}" | base64 --decode > android/key.properties
-
-#       - name: Build App Bundle
-#         run: flutter build appbundle
-
-#       - name: Cache bundle dependencies
-#         uses: actions/cache@v3
-#         with:
-#           path: vendor/bundle
-#           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-#           restore-keys: ${{ runner.os }}-gems-
-
-#       - name: Download bundle dependencies
-#         run: |
-#           gem install bundler:2.0.2
-#           bundle config path vendor/bundle
-#           bundle install
-
-#       - name: Release to Google Play (beta)
-#         env:
-#           SUPPLY_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
-#           SUPPLY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
-#         run: |
-#           bundle exec fastlane supply \
-#           --aab build/app/outputs/bundle/release/app-release.aab \
-#           --track beta
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'         
+          
+      - name: Run Fastlane
+        uses: maierj/fastlane-action@v2.3.0
+        with:
+          lane: android build_and_deploy
+          subdirectory: android
+        env:
+          GOOGLE_PLAY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+          MATCH_PASSWORD: ${{ secrets.ANDROID_PASSWORD }}
