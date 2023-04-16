@@ -40,14 +40,14 @@ platform :android do
 
     signed_aab_path = match_keystore(git_url: "git@github.com:MaikelStuivenberg/fastlane-certs.git", 
                     package_name: "nl.maikelstuivenberg.encore_gamesheet",
-                    aab_path: "../build/app/outputs/bundle/Release/app-release.aab",
+                    aab_path: "../build/app/outputs/bundle/release/app-release.aab",
                     match_secret: ENV['MATCH_PASSWORD'],
                     override_keystore: false)
                     
     upload_to_play_store(
                         package_name: package_name,
                         json_key_data: ENV['GOOGLE_PLAY_JSON_KEY_DATA'], 
-                        aab: "../build/app/outputs/bundle/Release/app-release-signed.aab",
+                        aab: "../build/app/outputs/bundle/release/app-release-signed.aab",
                         release_status: "completed",
                         track: "production")
   end
