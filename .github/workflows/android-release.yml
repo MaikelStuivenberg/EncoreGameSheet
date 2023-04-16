@@ -1,7 +1,6 @@
 name: Android Build & Release
 
 on:
-  push:
   pull_request:
     branches: ["main"]
 

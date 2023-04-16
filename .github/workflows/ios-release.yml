@@ -1,7 +1,6 @@
 name: Build and sign iOS
 
 on:
-  push:
   pull_request:
     branches: ["main"]
 
