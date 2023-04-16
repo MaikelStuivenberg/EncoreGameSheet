@@ -36,4 +36,4 @@ jobs:
           subdirectory: android
         env:
           GOOGLE_PLAY_JSON_KEY_DATA: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
-          MATCH_PASSWORD: ${{ secrets.FASTLANE_APP_PASSWORD }}
+          MATCH_PASSWORD: ${{ secrets.ANDROID_PASSWORD }}

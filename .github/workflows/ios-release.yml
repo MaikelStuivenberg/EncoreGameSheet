@@ -36,5 +36,4 @@ jobs:
           lane: ios release
           subdirectory: ios
         env:
-          MATCH_PASSWORD: ${{ secrets.FASTLANE_APP_PASSWORD }}
           APPSTORECONNECT_PRIVATE_KEY: "${{ secrets.APPLE_API_KEY }}"

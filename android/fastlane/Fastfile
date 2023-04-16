@@ -28,18 +28,22 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :build_and_deploy do
+
     package_name = "nl.maikelstuivenberg.encore_gamesheet"
     build_number = google_play_track_version_codes(package_name: package_name, track: "production", json_key_data: ENV['GOOGLE_PLAY_JSON_KEY_DATA'])[0] + 1
+
     Dir.chdir "../.." do
         sh("flutter", "packages", "get")
         sh("flutter", "clean")
         sh("flutter", "build", "appbundle",  "--target", "lib/main.dart", "--build-number=#{build_number}")
     end
+
     signed_aab_path = match_keystore(git_url: "git@github.com:MaikelStuivenberg/fastlane-certs.git", 
                     package_name: "nl.maikelstuivenberg.encore_gamesheet",
                     aab_path: "../build/app/outputs/bundle/Release/app-release.aab",
                     match_secret: ENV['MATCH_PASSWORD'],
                     override_keystore: false)
+                    
     upload_to_play_store(
                         package_name: package_name,
                         json_key_data: ENV['GOOGLE_PLAY_JSON_KEY_DATA'], 
