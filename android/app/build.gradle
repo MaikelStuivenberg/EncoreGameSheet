@@ -61,6 +61,7 @@ android {
             signingConfig
         }
     }
+    namespace 'nl.maikelstuivenberg.encore_gamesheet'
 }
 
 flutter {
