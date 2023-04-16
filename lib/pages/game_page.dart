@@ -51,6 +51,7 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
+    loadSettings();
   }
 
   @override
@@ -558,7 +559,7 @@ class _GamePageState extends State<GamePage> {
         opacity: 0.8,
         child: Icon(
           showStar ? Icons.star : null,
-          color: darkMode ? color.dmColorText : color.colorText,
+          color: darkMode ? color.colorText : color.dmColorText,
         ),
       );
 
