@@ -4,7 +4,7 @@
 Encore Game Sheet (Android / iOS app)
 ==================
 
-This app is a digital game sheet for the game Encore (Keer op Keer / Noch mal) build in <a href="https://flutter.dev/">Flutter<a>. You need the original dice to play the game with this app. 🎲
+This app is a digital game sheet for the game Encore (Keer op Keer / Noch mal / Plenus) build in <a href="https://flutter.dev/">Flutter<a>. You need the original dice to play the game with this app. 🎲
 
 Download
 ------------------
