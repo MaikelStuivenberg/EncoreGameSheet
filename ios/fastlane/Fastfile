@@ -40,10 +40,12 @@ platform :ios do
       archive_path: "../build/ios/archive/Runner.xcarchive"
     )
     dsym_zip
-    upload_to_testflight(
+    upload_to_app_store(
       app_identifier: app_identifier,
       api_key: api_key,
-      skip_waiting_for_build_processing: true,
+      submit_for_review: true,
+      automatic_release: true,
+      force: true,
     )
   end
 end
