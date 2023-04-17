@@ -1,4 +1,4 @@
-import 'package:encore_game_sheet/models/card_box.dart';
+import 'package:encore_gamesheet/models/card_box.dart';
 
 import '../models/card_box.dart';
 import '../constants/box_colors.dart';

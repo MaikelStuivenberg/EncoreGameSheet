@@ -1,4 +1,4 @@
-package nl.maikelstuivenberg.encore_game_sheet
+package nl.maikelstuivenberg.encore_gamesheet
 
 import io.flutter.embedding.android.FlutterActivity
 

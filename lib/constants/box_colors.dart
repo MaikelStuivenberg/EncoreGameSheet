@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:encore_game_sheet/models/box_color.dart';
+import 'package:encore_gamesheet/models/box_color.dart';
 
 class BoxColors {
   BoxColors._();

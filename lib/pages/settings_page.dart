@@ -1,4 +1,4 @@
-import 'package:encore_game_sheet/constants/settings.dart';
+import 'package:encore_gamesheet/constants/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
