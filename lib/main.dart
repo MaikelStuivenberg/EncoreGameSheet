@@ -28,9 +28,6 @@ class EncoreGameSheet extends StatelessWidget {
 
     return MaterialApp(
       title: 'Encore Game Sheet',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: GamePage(key: _key),
     );
   }

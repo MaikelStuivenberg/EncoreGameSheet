@@ -25,7 +25,6 @@ class SlashPainter extends CustomPainter {
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
 
-    // canvas.drawPoints(pointMode, points1, paint);
     canvas.drawPoints(pointMode, points2, paint);
   }
 

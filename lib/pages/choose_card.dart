@@ -73,8 +73,8 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
+                  width: 175,
+                  child: OutlinedButton(
                     onPressed: () {
                       Navigator.pop(context, ['Cancel']);
                     },
@@ -82,8 +82,8 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 150,
-                  child: OutlinedButton(
+                  width: 175,
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop([_lvl, 'multi']);
                     },
@@ -91,8 +91,8 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 150,
-                  child: OutlinedButton(
+                  width: 175,
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop([_lvl, 'single']);
                     },

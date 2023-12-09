@@ -118,8 +118,8 @@ class _SettingsPageState extends State<SettingsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
+                  width: 175,
+                  child: OutlinedButton(
                     onPressed: () {
                       Navigator.pop(context, ['resume']);
                     },
@@ -127,8 +127,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 150,
-                  child: OutlinedButton(
+                  width: 175,
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.push<List<String>>(
                         context,

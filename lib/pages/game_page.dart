@@ -22,10 +22,10 @@ class GamePage extends StatefulWidget {
   const GamePage({required Key key}) : super(key: key);
 
   @override
-  _GamePageState createState() => _GamePageState();
+  GamePageState createState() => GamePageState();
 }
 
-class _GamePageState extends State<GamePage> {
+class GamePageState extends State<GamePage> {
   // UI Settings (with default values, async loaded)
   var showScore = true;
   var darkMode = true;
@@ -138,6 +138,9 @@ class _GamePageState extends State<GamePage> {
               showScoreBoardRow(Icons.star, "(-2)", "-", starPoints),
             ],
           ),
+          const SizedBox(
+            height: 5,
+          ),
           Row(
             children: [
               showScoreBoardRow(null, "", "=", totalPoints, true),
@@ -185,8 +188,6 @@ class _GamePageState extends State<GamePage> {
           ],
         ),
       ));
-    } else {
-      optionalElements.add(const SizedBox(width: 0, height: 20));
     }
 
     return Container(
@@ -239,35 +240,30 @@ class _GamePageState extends State<GamePage> {
   }
 
   Widget showSettingsButton() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(1.5, 0, 1.5, 0),
-      width: 35,
-      height: 22,
-      child: IconButton(
-        icon: Icon(
-          Icons.settings,
-          color: darkMode ? Colors.white : Colors.black,
-        ),
-        onPressed: () {
-          Navigator.push<List<String>>(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SettingsPage(key: GlobalKey())),
-          ).then((value) => {
-                if (value!.isNotEmpty && value[0] != "resume")
-                  {
-                    setState(() {
-                      lvl = value[0];
-                      singlePlayerMode = value[1] == "single" ? true : false;
-                      resetGame();
-                    }),
-                  },
-
-                // Always load the new settings (can be changed without starting a new game)
-                loadSettings(),
-              });
-        },
+    return IconButton(
+      icon: Icon(
+        Icons.settings,
+        color: darkMode ? Colors.white : Colors.black,
       ),
+      onPressed: () {
+        Navigator.push<List<String>>(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SettingsPage(key: GlobalKey())),
+        ).then((value) => {
+              if (value!.isNotEmpty && value[0] != "resume")
+                {
+                  setState(() {
+                    lvl = value[0];
+                    singlePlayerMode = value[1] == "single" ? true : false;
+                    resetGame();
+                  }),
+                },
+
+              // Always load the new settings (can be changed without starting a new game)
+              loadSettings(),
+            });
+      },
     );
   }
 
@@ -563,10 +559,11 @@ class _GamePageState extends State<GamePage> {
         ),
       );
 
-      if (text.isNotEmpty)
+      if (text.isNotEmpty) {
         content = Stack(alignment: Alignment.center, children: [star, content]);
-      else
+      } else {
         content = star;
+      }
     }
 
     if (checked) {
