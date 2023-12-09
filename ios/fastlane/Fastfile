@@ -51,7 +51,7 @@ platform :ios do
         'en-GB' => 'We made the gamesheet a little bit better 🎲',
         'nl-NL' => 'We hebben de gamesheet weer een beetje verbeterd 🎲',
         'de-DE' => 'Wir haben das Spielblatt ein bisschen verbessert 🎲',
-        'ca-CA' => 'We made the gamesheet a little bit better 🎲',
+        'ca-ES' => 'We made the gamesheet a little bit better 🎲',
         'es-ES' => 'We made the gamesheet a little bit better 🎲',
         'it-IT' => 'We made the gamesheet a little bit better 🎲',
         'pt-PT' => 'We made the gamesheet a little bit better 🎲'
