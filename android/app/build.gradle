@@ -50,7 +50,7 @@ android {
     defaultConfig {
         applicationId "nl.maikelstuivenberg.encore_gamesheet"
         minSdkVersion 16
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
