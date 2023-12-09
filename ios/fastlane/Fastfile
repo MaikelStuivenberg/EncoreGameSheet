@@ -47,14 +47,14 @@ platform :ios do
       automatic_release: true,
       force: true,
       precheck_include_in_app_purchases: false,
-      release_notes: {
+      release_notes: ({
         'en-GB' => 'We made the gamesheet a little bit better 🎲',
-        'nl' => 'We hebben de gamesheet weer een beetje verbeterd 🎲',
-        'de' => 'Wir haben das Spielblatt ein bisschen verbessert 🎲',
+        'nl-NL' => 'We hebben de gamesheet weer een beetje verbeterd 🎲',
+        'de-DE' => 'Wir haben das Spielblatt ein bisschen verbessert 🎲',
         'es-ES' => 'We made the gamesheet a little bit better 🎲',
-        'it' => 'We made the gamesheet a little bit better 🎲',
+        'it-IT' => 'We made the gamesheet a little bit better 🎲',
         'pt-PT' => 'We made the gamesheet a little bit better 🎲'
-      }
+      })
     )
   end
 end
