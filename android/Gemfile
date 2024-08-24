@@ -2,4 +2,4 @@ source "https://rubygems.org"
 
 gem "fastlane"
 gem 'pry'
-gem 'fastlane-plugin-match_keystore'
+gem 'fastlane-plugin-match_android'

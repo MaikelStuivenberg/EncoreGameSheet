@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ChooseCardPage extends StatefulWidget {
-  const ChooseCardPage({required Key key}) : super(key: key);
+  const ChooseCardPage({super.key});
 
   @override
-  _ChooseCardPageState createState() => _ChooseCardPageState();
+  State<ChooseCardPage> createState() => _ChooseCardPageState();
 }
 
 class _ChooseCardPageState extends State<ChooseCardPage> {
@@ -65,7 +65,9 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
                       ],
                     ),
                   ),
-                  Expanded(flex: 3, child: Image.asset("assets/images/lvl$_lvl.jpg")),
+                  Expanded(
+                      flex: 3,
+                      child: Image.asset("assets/images/lvl$_lvl.jpg")),
                 ],
               ),
             ),
@@ -117,15 +119,17 @@ class _ChooseCardPageState extends State<ChooseCardPage> {
         value: lvl,
         groupValue: _lvl,
         onChanged: (String? val) => {
-          setState(() => {
-                if (val!.isNotEmpty) {_lvl = val}
-              }),
+          setState(() {
+            if (val!.isNotEmpty) {
+              _lvl = val;
+            }
+          }),
         },
       ),
       onTap: () => {
-        setState(() => {
-              _lvl = lvl,
-            }),
+        setState(() {
+          _lvl = lvl;
+        }),
       },
     );
   }

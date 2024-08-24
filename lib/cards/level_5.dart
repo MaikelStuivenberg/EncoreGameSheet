@@ -1,6 +1,4 @@
 import 'package:encore_gamesheet/models/card_box.dart';
-
-import '../models/card_box.dart';
 import '../constants/box_colors.dart';
 
 class Level5Card {

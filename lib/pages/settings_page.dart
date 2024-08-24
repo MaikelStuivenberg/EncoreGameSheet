@@ -5,16 +5,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'choose_card.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({required Key key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _showCurrentPoints = true;
   bool _useDarkMode = true;
-  bool _useHighscore = true;
   bool _useSounds = false;
   bool _useColorblind = false;
 
@@ -29,7 +28,6 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       _showCurrentPoints = prefs.getBool(Settings.showCurrentPoints) ?? true;
       _useDarkMode = prefs.getBool(Settings.darkMode) ?? true;
-      _useHighscore = prefs.getBool(Settings.highscore) ?? true;
       _useSounds = prefs.getBool(Settings.sounds) ?? false;
       _useColorblind = prefs.getBool(Settings.colorblind) ?? false;
     });
@@ -136,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             builder: (context) =>
                                 ChooseCardPage(key: GlobalKey())),
                       ).then((value) => {
-                            if (value![0] != "Cancel")
+                            if (context.mounted && value![0] != "Cancel")
                               Navigator.pop(context, value)
                           });
                     },

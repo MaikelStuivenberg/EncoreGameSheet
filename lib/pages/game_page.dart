@@ -19,7 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'choose_card.dart';
 
 class GamePage extends StatefulWidget {
-  const GamePage({required Key key}) : super(key: key);
+  const GamePage({super.key});
 
   @override
   GamePageState createState() => GamePageState();
@@ -739,7 +739,7 @@ class GamePageState extends State<GamePage> {
                         lvl = value[0],
                         singlePlayerMode = value[1] == "single" ? true : false,
                         resetGame(),
-                        Navigator.pop(context, "Ok")
+                        if (context.mounted) Navigator.pop(context, "Ok")
                       }
                   }),
             },
