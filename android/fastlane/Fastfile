@@ -18,7 +18,7 @@ default_platform(:android)
 platform :android do
   desc "Generate keystore"
   lane :keystore do
-    match_keystore(git_url: "git@github.com:MaikelStuivenberg/fastlane-certs.git", package_name: "nl.maikelstuivenberg.encore_gamesheet", override_keystore: true)
+    match_android(git_url: "git@github.com:MaikelStuivenberg/fastlane-certs.git", package_name: "nl.maikelstuivenberg.encore_gamesheet", override_keystore: true)
   end
 
   desc "Runs all the tests"
@@ -38,7 +38,7 @@ platform :android do
         sh("flutter", "build", "appbundle",  "--target", "lib/main.dart", "--build-number=#{build_number}")
     end
 
-    signed_aab_path = match_keystore(git_url: "git@github.com:MaikelStuivenberg/fastlane-certs.git", 
+    signed_aab_path = match_android(git_url: "git@github.com:MaikelStuivenberg/fastlane-certs.git", 
                     package_name: "nl.maikelstuivenberg.encore_gamesheet",
                     aab_path: "../build/app/outputs/bundle/release/app-release.aab",
                     match_secret: ENV['MATCH_PASSWORD'],
