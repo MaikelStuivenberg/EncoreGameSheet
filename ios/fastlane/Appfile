@@ -1,5 +1,5 @@
 app_identifier("nl.maikelstuivenberg.encore-gamesheet") # The bundle identifier of your app
-apple_id("app@maikelstuivenberg.nl") # Your Apple Developer Portal username
+apple_id("maikelstuivenberg@gmail.com") # Your Apple Developer Portal username
 
 itc_team_id("122994433") # App Store Connect Team ID
 team_id("C69673W982") # Developer Portal Team ID
