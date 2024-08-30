@@ -48,9 +48,9 @@ platform :ios do
       force: true,
       precheck_include_in_app_purchases: false,
       release_notes: ({
-        'default' => 'We made the gamesheet a little bit better'
+        'default' => 'We made the gamesheet a little bit better',
         'nl-NL' => 'We hebben de gamesheet weer een beetje verbeterd',
-        'de-DE' => 'Wir haben das Spielblatt ein bisschen verbessert',
+        'de-DE' => 'Wir haben das Spielblatt ein bisschen verbessert'
         # 'es-ES' => 'We made the gamesheet a little bit better 🎲',
         # 'it-IT' => 'We made the gamesheet a little bit better 🎲',
         # 'pt-PT' => 'We made the gamesheet a little bit better 🎲'
