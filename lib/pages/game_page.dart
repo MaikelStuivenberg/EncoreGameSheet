@@ -14,6 +14,7 @@ import 'package:encore_gamesheet/pages/settings_page.dart';
 import 'package:encore_gamesheet/painters/cross_painter.dart';
 import 'package:encore_gamesheet/painters/slash_painter.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'choose_card.dart';
@@ -713,7 +714,23 @@ class GamePageState extends State<GamePage> {
     return closedCount >= 2;
   }
 
+  void updateAmountOfPlayedGames() async {
+    final prefs = await SharedPreferences.getInstance();
+    var amountOfPlayedGames = prefs.getInt(Settings.amountOfPlayedGames) ?? 0;
+    amountOfPlayedGames++;
+    prefs.setInt(Settings.amountOfPlayedGames, amountOfPlayedGames);
+  }
+
+  Future<bool> isSecondGame() async {
+    var amountOfPlayedGames = (await SharedPreferences.getInstance())
+        .getInt(Settings.amountOfPlayedGames);
+
+    return amountOfPlayedGames != null && amountOfPlayedGames == 2;
+  }
+
   void gameFinished() {
+    updateAmountOfPlayedGames();
+
     playWinSound();
 
     showDialog<String>(
@@ -724,11 +741,27 @@ class GamePageState extends State<GamePage> {
             Text('You finished the game with ${calcTotalPoints()} points!'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => {Navigator.pop(context, "Cancel")},
+            onPressed: () async {
+              if (await InAppReview.instance.isAvailable() &&
+                  await isSecondGame()) {
+                InAppReview.instance.requestReview();
+              }
+
+              if (!context.mounted) return;
+
+              Navigator.pop(context, "Cancel");
+            },
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => {
+            onPressed: () async {
+              if (await InAppReview.instance.isAvailable() &&
+                  await isSecondGame()) {
+                InAppReview.instance.requestReview();
+              }
+
+              if (!context.mounted) return;
+
               Navigator.push<List<String>>(
                 context,
                 MaterialPageRoute(
@@ -741,7 +774,7 @@ class GamePageState extends State<GamePage> {
                         resetGame(),
                         if (context.mounted) Navigator.pop(context, "Ok")
                       }
-                  }),
+                  });
             },
             child: const Text('Start new game'),
           ),

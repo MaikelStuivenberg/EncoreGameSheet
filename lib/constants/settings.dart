@@ -6,4 +6,5 @@ class Settings {
   static const String highscore = "highscore";
   static const String sounds = "sounds";
   static const String colorblind = "colorblind";
+  static const String amountOfPlayedGames = "amount_of_played_games";
 }

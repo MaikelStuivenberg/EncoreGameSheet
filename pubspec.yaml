@@ -3,7 +3,7 @@ description: A (digital) game sheet for Encore (Noch Mal / Keer op Keer)
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.6.1+17
+version: 1.6.2+18
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -16,6 +16,7 @@ dependencies:
   wakelock_plus: ^1.2.8
   path_provider: ^2.0.14
   intl: ^0.19.0
+  in_app_review: ^2.0.9
 
 dev_dependencies:
   flutter_test:
