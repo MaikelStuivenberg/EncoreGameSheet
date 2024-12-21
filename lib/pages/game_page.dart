@@ -10,17 +10,21 @@ import 'package:encore_gamesheet/constants/box_colors.dart';
 import 'package:encore_gamesheet/constants/card_points.dart';
 import 'package:encore_gamesheet/constants/settings.dart';
 import 'package:encore_gamesheet/models/box_color.dart';
+import 'package:encore_gamesheet/pages/home_page.dart';
 import 'package:encore_gamesheet/pages/settings_page.dart';
 import 'package:encore_gamesheet/painters/cross_painter.dart';
 import 'package:encore_gamesheet/painters/slash_painter.dart';
+import 'package:encore_gamesheet/shared/widgets/game_button.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'choose_card.dart';
+import 'package:flutter/services.dart';
 
 class GamePage extends StatefulWidget {
-  const GamePage({super.key});
+  final int level; // Add level parameter
+  final bool singlePlayer; // Add singlePlayer parameter
+
+  const GamePage({super.key, required this.level, required this.singlePlayer});
 
   @override
   GamePageState createState() => GamePageState();
@@ -48,19 +52,38 @@ class GamePageState extends State<GamePage> {
   // Single player mode variables
   var turnCount = 0;
   var partlyClosedColumns = [];
+  var singlePlayerGamesPlayed = 0; // Add this variable
+  var multiplayerGamesPlayed = 0; // Add this variable
+  Set<int> levelsPlayed = {}; // Add this variable
+  int gamesWon = 0;
+  int winStreak = 0;
 
   @override
   void initState() {
     super.initState();
     loadSettings();
+    loadSinglePlayerGamesPlayed(); // Load the count of single player games played
+    loadMultiplayerGamesPlayed(); // Load the count of multiplayer games played
+    loadLevelsPlayed(); // Load the levels played
+    setLevel(widget.level); // Set the level based on the passed parameter
+    singlePlayerMode = widget.singlePlayer; // Set the singlePlayer mode
+    loadGamesWon();
+    loadWinStreak();
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+
     return Scaffold(
-      backgroundColor: darkMode
-          ? const Color.fromARGB(255, 30, 30, 30)
-          : const Color.fromARGB(255, 240, 240, 240),
+      backgroundColor: darkMode ? const Color.fromARGB(255, 30, 30, 30) : null,
       body: Container(
         width: double.infinity,
         margin: const EdgeInsets.all(18),
@@ -105,9 +128,7 @@ class GamePageState extends State<GamePage> {
                     ),
                   ],
                 ),
-                Row(
-                  children: [showScoreBoard()],
-                )
+                showScoreBoard(),
               ],
             ),
           ],
@@ -117,50 +138,31 @@ class GamePageState extends State<GamePage> {
   }
 
   Widget showScoreBoard() {
-    final rowBonusPoints = calcClosedColorsPoints();
-    final closedPoints = calcClosedColumnsPoints();
-    final bonusPoints = calcBonusPoints();
-    final starPoints = calcStarPoints();
-    final totalPoints = calcTotalPoints();
-
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 10, 0, 1),
+      width: 125,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              showScoreBoardRow(null, "BONUS", "=", rowBonusPoints),
-              showScoreBoardRow(Icons.priority_high, "(+1)", "+", bonusPoints),
-            ],
-          ),
-          Row(
-            children: [
-              showScoreBoardRow(null, "A-O", "+", closedPoints),
-              showScoreBoardRow(Icons.star, "(-2)", "-", starPoints),
-            ],
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Row(
-            children: [
-              showScoreBoardRow(null, "", "=", totalPoints, true),
-              showSettingsButton(),
-            ],
-          ),
+          showTotalScoreButton(),
+          const SizedBox(height: 4),
+          showSettingsButton(),
+          const SizedBox(height: 4),
+          showEndGameButton(),
         ],
       ),
     );
   }
 
-  Widget showScoreBoardRow(IconData? iconPrefix, textPrefix, text, number,
-      [large = false]) {
+  Widget showScoreBoardRow(IconData? iconPrefix, textPrefix, text, number) {
     var children = [];
     if (iconPrefix != null) {
       children.add(Container(
         margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: Icon(iconPrefix,
-            color: darkMode ? Colors.white : Colors.black, size: 20),
+            color:
+                darkMode ? const Color.fromARGB(225, 30, 30, 30) : Colors.black,
+            size: 20),
       ));
     }
 
@@ -169,10 +171,10 @@ class GamePageState extends State<GamePage> {
         margin: EdgeInsets.fromLTRB(children.isEmpty ? 10 : 5, 0, 0, 0),
         child: Text(
           textPrefix,
-          style: TextStyle(
-            color: darkMode ? Colors.white : Colors.black,
+          style: const TextStyle(
+            color: Colors.black,
             fontWeight: FontWeight.normal,
-            fontSize: 11,
+            fontSize: 12,
           ),
         ),
       ));
@@ -197,12 +199,11 @@ class GamePageState extends State<GamePage> {
         children: [
           ...optionalElements,
           Container(
-            width: large ? 90 : 55,
-            height: large ? 28 : 22,
+            width: 90,
+            height: 28,
             decoration: BoxDecoration(
               border: Border.all(
-                  color: darkMode ? Colors.white : Colors.black,
-                  width: large ? 2 : 1),
+                  color: darkMode ? Colors.white : Colors.black, width: 1),
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               color: darkMode
                   ? const Color.fromARGB(225, 30, 30, 30)
@@ -217,19 +218,19 @@ class GamePageState extends State<GamePage> {
                   style: TextStyle(
                     color: darkMode ? Colors.white : Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: large ? 14 : 11,
+                    fontSize: 14,
                   ),
                 ),
               ),
               SizedBox(
-                width: large ? 55 : 25,
+                width: 55,
                 child: Text(
                   showScore ? number.toString() : "?",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: darkMode ? Colors.white : Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: large ? 16 : 14,
+                    fontSize: 16,
                   ),
                 ),
               ),
@@ -240,13 +241,58 @@ class GamePageState extends State<GamePage> {
     );
   }
 
+  Widget showTotalScoreButton() {
+    return GameButton.secondary(
+      showScore ? '${calcTotalPoints()} points' : 'Score',
+      () {
+        final rowBonusPoints = calcClosedColorsPoints();
+        final closedPoints = calcClosedColumnsPoints();
+        final bonusPoints = calcBonusPoints();
+        final starPoints = calcStarPoints();
+
+        showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Total score'),
+            content: Column(
+              children: [
+                Row(
+                  children: [
+                    showScoreBoardRow(null, "BONUS", "=", rowBonusPoints),
+                    const SizedBox(width: 8),
+                    showScoreBoardRow(
+                        Icons.priority_high, "(+1)", "+", bonusPoints),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    showScoreBoardRow(null, "A-O", "+", closedPoints),
+                    const SizedBox(width: 8),
+                    showScoreBoardRow(Icons.star, "(-2)", "-", starPoints),
+                  ],
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              GameButton.primary(
+                'Ok',
+                () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+      isDarkMode: darkMode,
+    );
+  }
+
   Widget showSettingsButton() {
-    return IconButton(
-      icon: Icon(
-        Icons.settings,
-        color: darkMode ? Colors.white : Colors.black,
-      ),
-      onPressed: () {
+    return GameButton.secondary(
+      'Settings',
+      () {
         Navigator.push<List<String>>(
           context,
           MaterialPageRoute(
@@ -264,6 +310,59 @@ class GamePageState extends State<GamePage> {
               // Always load the new settings (can be changed without starting a new game)
               loadSettings(),
             });
+      },
+      isDarkMode: darkMode,
+    );
+  }
+
+  Widget showEndGameButton() {
+    return GameButton.primary(
+      'End Game',
+      () {
+        showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Total score'),
+            content:
+                Text('You finished the game with ${calcTotalPoints()} points!'),
+            actions: <Widget>[
+              Row(
+                children: [
+                  Expanded(
+                    child: GameButton.secondary(
+                      'Cancel',
+                      () {
+                        Navigator.pop(context, "Cancel");
+                      },
+                      // isDarkMode: darkMode,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: GameButton.primary(
+                      'Ok',
+                      () async {
+                        updateAmountOfPlayedGames();
+
+                        final prefs = await SharedPreferences.getInstance();
+                        winStreak = 0;
+                        prefs.setInt(Settings.winStreak, winStreak);
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
       },
     );
   }
@@ -716,27 +815,77 @@ class GamePageState extends State<GamePage> {
 
   void updateAmountOfPlayedGames() async {
     final prefs = await SharedPreferences.getInstance();
-    var amountOfPlayedGames = prefs.getInt(Settings.amountOfPlayedGames) ?? 0;
-    amountOfPlayedGames++;
-    prefs.setInt(Settings.amountOfPlayedGames, amountOfPlayedGames);
+
+    if (singlePlayerMode) {
+      singlePlayerGamesPlayed++;
+      prefs.setInt(Settings.singlePlayerGamesPlayed, singlePlayerGamesPlayed);
+    } else {
+      multiplayerGamesPlayed++;
+      prefs.setInt(Settings.multiplayerGamesPlayed, multiplayerGamesPlayed);
+    }
+
+    levelsPlayed.add(widget.level);
+    prefs.setStringList(
+        Settings.levelsPlayed, levelsPlayed.map((e) => e.toString()).toList());
+  }
+
+  Future<void> loadSinglePlayerGamesPlayed() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      singlePlayerGamesPlayed =
+          prefs.getInt(Settings.singlePlayerGamesPlayed) ?? 0;
+    });
+  }
+
+  Future<void> loadMultiplayerGamesPlayed() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      multiplayerGamesPlayed =
+          prefs.getInt(Settings.multiplayerGamesPlayed) ?? 0;
+    });
+  }
+
+  Future<void> loadLevelsPlayed() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      levelsPlayed = (prefs.getStringList(Settings.levelsPlayed) ?? [])
+          .map((e) => int.parse(e))
+          .toSet();
+    });
+  }
+
+  Future<void> loadGamesWon() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      gamesWon = prefs.getInt(Settings.gamesWon) ?? 0;
+    });
+  }
+
+  Future<void> loadWinStreak() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      winStreak = prefs.getInt(Settings.winStreak) ?? 0;
+    });
   }
 
   Future<bool> isSecondGame() async {
-    var amountOfPlayedGames = (await SharedPreferences.getInstance())
-        .getInt(Settings.amountOfPlayedGames);
+    var singlePlayerGamesPlayed = (await SharedPreferences.getInstance())
+            .getInt(Settings.singlePlayerGamesPlayed) ??
+        0;
+    var multiplePlayerGamesPlayed = (await SharedPreferences.getInstance())
+            .getInt(Settings.multiplayerGamesPlayed) ??
+        0;
 
-    return amountOfPlayedGames != null && amountOfPlayedGames == 2;
+    return (singlePlayerGamesPlayed + multiplePlayerGamesPlayed) == 2;
   }
 
   void gameFinished() {
-    updateAmountOfPlayedGames();
-
     playWinSound();
 
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Finished!'),
+        title: const Text('You won!'),
         content:
             Text('You finished the game with ${calcTotalPoints()} points!'),
         actions: <Widget>[
@@ -755,29 +904,48 @@ class GamePageState extends State<GamePage> {
           ),
           TextButton(
             onPressed: () async {
-              if (await InAppReview.instance.isAvailable() &&
-                  await isSecondGame()) {
-                InAppReview.instance.requestReview();
-              }
+              updateAmountOfPlayedGames();
+              final prefs = await SharedPreferences.getInstance();
+              gamesWon++;
+              winStreak++;
+              prefs.setInt(Settings.gamesWon, gamesWon);
+              prefs.setInt(Settings.winStreak, winStreak);
 
-              if (!context.mounted) return;
-
-              Navigator.push<List<String>>(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ChooseCardPage(key: GlobalKey())),
-              ).then((value) => {
-                    if (value![0] != "Cancel")
-                      {
-                        lvl = value[0],
-                        singlePlayerMode = value[1] == "single" ? true : false,
-                        resetGame(),
-                        if (context.mounted) Navigator.pop(context, "Ok")
-                      }
-                  });
+                  builder: (context) => const HomePage(),
+                ),
+                (route) => false,
+              );
             },
-            child: const Text('Start new game'),
+            child: const Text('New game'),
           ),
+          // TextButton(
+          //   onPressed: () async {
+          //     if (await InAppReview.instance.isAvailable() &&
+          //         await isSecondGame()) {
+          //       InAppReview.instance.requestReview();
+          //     }
+
+          //     if (!context.mounted) return;
+
+          //     Navigator.push<List<String>>(
+          //       context,
+          //       MaterialPageRoute(
+          //           builder: (context) => ChooseCardPage(key: GlobalKey())),
+          //     ).then((value) => {
+          //           if (value![0] != "Cancel")
+          //             {
+          //               lvl = value[0],
+          //               singlePlayerMode = value[1] == "single" ? true : false,
+          //               resetGame(),
+          //               if (context.mounted) Navigator.pop(context, "Ok")
+          //             }
+          //         });
+          //   },
+          //   child: const Text('Start new game + Show short ad'),
+          // ),
         ],
       ),
     );
@@ -810,6 +978,34 @@ class GamePageState extends State<GamePage> {
           card = Level6Card().getCard();
           break;
         case "7":
+          card = Level7Card().getCard();
+          break;
+      }
+    });
+  }
+
+  void setLevel(int level) {
+    setState(() {
+      switch (level) {
+        case 1:
+          card = Level1Card().getCard();
+          break;
+        case 2:
+          card = Level2Card().getCard();
+          break;
+        case 3:
+          card = Level3Card().getCard();
+          break;
+        case 4:
+          card = Level4Card().getCard();
+          break;
+        case 5:
+          card = Level5Card().getCard();
+          break;
+        case 6:
+          card = Level6Card().getCard();
+          break;
+        case 7:
           card = Level7Card().getCard();
           break;
       }

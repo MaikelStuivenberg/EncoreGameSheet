@@ -1,10 +1,13 @@
+import 'package:encore_gamesheet/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'pages/game_page.dart';
-
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // MobileAds.instance.initialize();
+
   runApp(const EncoreGameSheet());
 }
 
@@ -15,6 +18,7 @@ class EncoreGameSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
@@ -25,7 +29,7 @@ class EncoreGameSheet extends StatelessWidget {
 
     return const MaterialApp(
       title: 'Encore Game Sheet',
-      home: GamePage(),
+      home: HomePage(),
     );
   }
 }

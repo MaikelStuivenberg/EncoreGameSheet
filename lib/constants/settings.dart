@@ -6,5 +6,9 @@ class Settings {
   static const String highscore = "highscore";
   static const String sounds = "sounds";
   static const String colorblind = "colorblind";
-  static const String amountOfPlayedGames = "amount_of_played_games";
+  static const String singlePlayerGamesPlayed = 'singlePlayerGamesPlayed';
+  static const String multiplayerGamesPlayed = 'multiplayerGamesPlayed';
+  static const String levelsPlayed = 'levelsPlayed';
+  static const String gamesWon = 'gamesWon';
+  static const String winStreak = 'winStreak';
 }

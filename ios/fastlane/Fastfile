@@ -48,10 +48,10 @@ platform :ios do
       force: true,
       precheck_include_in_app_purchases: false,
       release_notes: ({
-        'default' => 'We made the gamesheet a little bit better',
-        'en-GB' => 'We made the gamesheet a little bit better',
-        'nl-NL' => 'We hebben de gamesheet weer een beetje verbeterd',
-        'de-DE' => 'Wir haben das Spielblatt ein bisschen verbessert'
+        'default' => 'You can now select the level on the home screen + we introduced 10 achievements,',
+        'en-GB' => 'You can now select the level on the home screen + we introduced 10 achievements,',
+        'nl-NL' => 'Je kunt nu het level selecteren op het startscherm + we hebben 10 achievements toegevoegd',
+        'de-DE' => 'Sie können jetzt das Level auf dem Startschirm auswählen + wir haben 10 Erfolge eingeführt',
         # 'es-ES' => 'We made the gamesheet a little bit better 🎲',
         # 'it-IT' => 'We made the gamesheet a little bit better 🎲',
         # 'pt-PT' => 'We made the gamesheet a little bit better 🎲'
