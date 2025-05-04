@@ -80,7 +80,8 @@ class _HostGamePageState extends State<HostGamePage> {
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _error = 'Failed to create game: \\${e.toString()}';
+        _error =
+            'It currently is not possible to start a (online) game due to technical issues. Please try again later.';
       });
     }
   }
