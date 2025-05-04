@@ -105,7 +105,6 @@ class GamePageState extends State<GamePage> {
       _fetchCurrentTurn();
       _fetchOnlinePlayers();
 
-      _subscribeToPlayerStates();
       _subscribeToGameUpdates();
     }
   }
@@ -152,7 +151,7 @@ class GamePageState extends State<GamePage> {
       final resultsList = players.map((p) {
         return {
           'name': p['name'],
-          'score': calculateScoreFromState(p['game_state']),
+          'score': calculateScoreFromState(p['game_state'], p['name']),
         };
       }).toList();
 
@@ -235,24 +234,6 @@ class GamePageState extends State<GamePage> {
           card.map((row) => row.map((box) => box.checked).toList()).toList(),
       'bonusUsed': bonusUsed,
     };
-  }
-
-  void _subscribeToPlayerStates() {
-    _playerChannel = SupabaseClientManager.client.channel('public:players')
-      ..onPostgresChanges(
-        event: PostgresChangeEvent.update,
-        schema: 'public',
-        table: 'players',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'game_code',
-          value: widget.gameCode!,
-        ),
-        callback: (payload) {
-          // final newRow = payload.newRecord;
-        },
-      )
-      ..subscribe();
   }
 
   void _subscribeToGameUpdates() {
@@ -370,10 +351,11 @@ class GamePageState extends State<GamePage> {
                 child: Text(
                   'Waiting for $currentTurn...',
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.yellow),
                 ),
               ),
             ),
@@ -403,15 +385,16 @@ class GamePageState extends State<GamePage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
+                      Text(
                         'Game Over',
                         style: TextStyle(
-                          fontSize: 36,
+                          fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orange,
+                          color: darkMode ? Colors.white : Colors.black,
+                          decoration: TextDecoration.none,
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       Builder(
                         builder: (context) {
                           // Sort and show all results
@@ -426,7 +409,7 @@ class GamePageState extends State<GamePage> {
                                     margin:
                                         const EdgeInsets.symmetric(vertical: 6),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
+                                        horizontal: 12, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: r['name'] == winner['name']
                                           ? Colors.amber.withOpacity(0.2)
@@ -450,8 +433,9 @@ class GamePageState extends State<GamePage> {
                                             Text(
                                               r['name'],
                                               style: TextStyle(
+                                                decoration: TextDecoration.none,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 22,
+                                                fontSize: 18,
                                                 color: r['name'] ==
                                                         widget.playerName
                                                     ? Colors.blue
@@ -465,8 +449,9 @@ class GamePageState extends State<GamePage> {
                                         Text(
                                           '${r['score']}',
                                           style: TextStyle(
+                                            decoration: TextDecoration.none,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 22,
+                                            fontSize: 18,
                                             color: r['name'] == winner['name']
                                                 ? Colors.amber[800]
                                                 : (darkMode
@@ -809,6 +794,13 @@ class GamePageState extends State<GamePage> {
   }
 
   Widget showScoreRow() {
+    Map<int, String> autoClosedColumns = {};
+    for (int i = 0; i < card[0].length; i++) {
+      if (card.every((row) => row[i].checked)) {
+        autoClosedColumns[i] = widget.playerName!;
+      }
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -819,7 +811,8 @@ class GamePageState extends State<GamePage> {
                   // Points logic: local closed = first, db closed (not local) = second, else first
                   (manualClosedColumns.contains(i)
                           ? CardPoints.first[i]
-                          : dbClosedColumns.containsKey(i)
+                          : dbClosedColumns.containsKey(i) &&
+                                  dbClosedColumns[i] != widget.playerName
                               ? CardPoints.second[i]
                               : CardPoints.first[i])
                       .toString(),
@@ -1072,11 +1065,11 @@ class GamePageState extends State<GamePage> {
     }
 
     var closedCount = 0;
-    if (isBoxColorFirstClosedByMe(BoxColors.greenBox)) closedCount++;
-    if (isBoxColorFirstClosedByMe(BoxColors.yellowBox)) closedCount++;
-    if (isBoxColorFirstClosedByMe(BoxColors.blueBox)) closedCount++;
-    if (isBoxColorFirstClosedByMe(BoxColors.pinkBox)) closedCount++;
-    if (isBoxColorFirstClosedByMe(BoxColors.orangeBox)) closedCount++;
+    if (isBoxColorClosedByMe(BoxColors.greenBox)) closedCount++;
+    if (isBoxColorClosedByMe(BoxColors.yellowBox)) closedCount++;
+    if (isBoxColorClosedByMe(BoxColors.blueBox)) closedCount++;
+    if (isBoxColorClosedByMe(BoxColors.pinkBox)) closedCount++;
+    if (isBoxColorClosedByMe(BoxColors.orangeBox)) closedCount++;
 
     return closedCount >= 2;
   }
@@ -1299,7 +1292,7 @@ class GamePageState extends State<GamePage> {
   }
 
   // --- Calculate score from serialized state for online results ---
-  int calculateScoreFromState(Map<String, dynamic> state) {
+  int calculateScoreFromState(Map<String, dynamic> state, String playerName) {
     // Reconstruct the card for the correct level
     List<List<CardBox>> baseCard;
     switch (widget.level) {
@@ -1332,7 +1325,7 @@ class GamePageState extends State<GamePage> {
     final checked = state['checked'] as List<dynamic>;
     for (int i = 0; i < baseCard.length; i++) {
       for (int j = 0; j < baseCard[i].length; j++) {
-        if (baseCard[i][j] != null && checked[i][j] != null) {
+        if (checked[i][j] != null) {
           baseCard[i][j].checked = checked[i][j] as bool;
         }
       }
@@ -1342,23 +1335,55 @@ class GamePageState extends State<GamePage> {
     // --- Closed Columns Points ---
     int closedColumnsPoints = 0;
     for (int i = 0; i < CardPoints.first.length; i++) {
-      if (!baseCard.every((row) => row[i] != null && row[i].checked)) continue;
-      closedColumnsPoints += CardPoints.first[i];
+      if (!baseCard.every((row) => row[i].checked)) continue;
+
+      if (dbClosedColumns[i] == playerName) {
+        closedColumnsPoints += CardPoints.first[i];
+      } else {
+        closedColumnsPoints += CardPoints.second[i];
+      }
     }
 
     // --- Closed Colors Points ---
     int closedColorsPoints = 0;
+
     bool isColorClosed(BoxColor color) {
       return baseCard.every((row) => row
-          .where((element) => element != null && element.color == color)
+          .where((element) => element.color == color)
           .every((element) => element.checked));
     }
 
-    if (isColorClosed(BoxColors.greenBox)) closedColorsPoints += 5;
-    if (isColorClosed(BoxColors.yellowBox)) closedColorsPoints += 5;
-    if (isColorClosed(BoxColors.blueBox)) closedColorsPoints += 5;
-    if (isColorClosed(BoxColors.pinkBox)) closedColorsPoints += 5;
-    if (isColorClosed(BoxColors.orangeBox)) closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.greenBox) &&
+        dbClosedColors[BoxColors.greenBox.textValue] == playerName)
+      closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.yellowBox) &&
+        dbClosedColors[BoxColors.yellowBox.textValue] == playerName)
+      closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.blueBox) &&
+        dbClosedColors[BoxColors.blueBox.textValue] == playerName)
+      closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.pinkBox) &&
+        dbClosedColors[BoxColors.pinkBox.textValue] == playerName)
+      closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.orangeBox) &&
+        dbClosedColors[BoxColors.orangeBox.textValue] == playerName)
+      closedColorsPoints += 5;
+
+    if (isColorClosed(BoxColors.greenBox) &&
+        dbClosedColors[BoxColors.greenBox.textValue] != playerName)
+      closedColorsPoints += 3;
+    if (isColorClosed(BoxColors.yellowBox) &&
+        dbClosedColors[BoxColors.yellowBox.textValue] != playerName)
+      closedColorsPoints += 3;
+    if (isColorClosed(BoxColors.blueBox) &&
+        dbClosedColors[BoxColors.blueBox.textValue] != playerName)
+      closedColorsPoints += 3;
+    if (isColorClosed(BoxColors.pinkBox) &&
+        dbClosedColors[BoxColors.pinkBox.textValue] != playerName)
+      closedColorsPoints += 3;
+    if (isColorClosed(BoxColors.orangeBox) &&
+        dbClosedColors[BoxColors.orangeBox.textValue] != playerName)
+      closedColorsPoints += 3;
 
     // --- Bonus Points ---
     int bonusPoints = maxBonus - bonusUsedFromState;
@@ -1366,8 +1391,7 @@ class GamePageState extends State<GamePage> {
     // --- Star Points (penalty) ---
     int starPoints = baseCard
             .expand((element) => element)
-            .where((element) =>
-                element != null && element.star && !element.checked)
+            .where((element) => element.star && !element.checked)
             .length *
         2;
 

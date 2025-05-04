@@ -85,6 +85,7 @@ class _GameButtonState extends State<GameButton> {
                 Text(
                   widget.text,
                   style: TextStyle(
+                    decoration: TextDecoration.none,
                     color: widget.textColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:encore_gamesheet/shared/widgets/game_button.dart';
 
 class ScoreBoard extends StatelessWidget {
   final Widget totalScoreButton;
@@ -30,4 +29,4 @@ class ScoreBoard extends StatelessWidget {
       ),
     );
   }
-} 
+}

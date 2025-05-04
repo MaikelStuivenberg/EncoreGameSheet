@@ -51,7 +51,7 @@ class _HostGamePageState extends State<HostGamePage> {
             })
             .select()
             .single();
-        if (response != null && response['code'] == code) {
+        if (response['code'] == code) {
           success = true;
         } else {
           code = _generateCode();

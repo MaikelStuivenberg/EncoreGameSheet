@@ -110,12 +110,12 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
           ),
           callback: (payload) {
             final newRow = payload.newRecord;
-            if (newRow != null && newRow['selected_level'] != null) {
+            if (newRow['selected_level'] != null) {
               setState(() {
                 selectedLevel = newRow['selected_level'] as int;
               });
             }
-            if (newRow != null && newRow['game_started'] == true) {
+            if (newRow['game_started'] == true) {
               // Navigate to GamePage for all players
               if (mounted) {
                 Navigator.pushReplacement(
