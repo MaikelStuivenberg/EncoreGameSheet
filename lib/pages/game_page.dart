@@ -809,17 +809,25 @@ class GamePageState extends State<GamePage> {
         Row(
           children: [
             for (var i = 0; i < CardPoints.first.length; i++)
-              showBox(
-                  // Points logic: local closed = first, db closed (not local) = second, else first
-                  (manualClosedColumns.contains(i)
-                          ? CardPoints.first[i]
-                          : dbClosedColumns.containsKey(i) &&
-                                  dbClosedColumns[i] != widget.playerName
+              isOnline
+                  ? showBox(
+                      // Points logic: local closed = first, db closed (not local) = second, else first
+                      (manualClosedColumns.contains(i)
+                              ? CardPoints.first[i]
+                              : (dbClosedColumns.containsKey(i) &&
+                                      dbClosedColumns[i] != widget.playerName)
+                                  ? CardPoints.second[i]
+                                  : CardPoints.first[i])
+                          .toString(),
+                      false,
+                      isColumnFinished(i))
+                  : showBox(
+                      (manualClosedColumns.contains(i) && !singlePlayerMode
                               ? CardPoints.second[i]
                               : CardPoints.first[i])
-                      .toString(),
-                  false,
-                  isColumnFinished(i))
+                          .toString(),
+                      false,
+                      isColumnFinished(i))
           ],
         ),
       ],
