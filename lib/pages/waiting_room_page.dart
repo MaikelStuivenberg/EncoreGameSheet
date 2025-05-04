@@ -142,8 +142,7 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
     });
     await SupabaseClientManager.client
         .from('games')
-        .update({'selected_level': newLevel})
-        .eq('code', widget.gameCode);
+        .update({'selected_level': newLevel}).eq('code', widget.gameCode);
   }
 
   void _startGame() async {
@@ -158,8 +157,8 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
     final startPlayer = playerNames.first;
     await client
         .from('games')
-        .update({'game_started': true, 'current_turn': startPlayer})
-        .eq('code', widget.gameCode);
+        .update({'game_started': true, 'current_turn': startPlayer}).eq(
+            'code', widget.gameCode);
   }
 
   @override
@@ -182,7 +181,8 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
       return SizedBox(
         height: 180,
         child: PageView.builder(
-          controller: PageController(viewportFraction: 0.8, initialPage: selectedLevel - 1),
+          controller: PageController(
+              viewportFraction: 0.8, initialPage: selectedLevel - 1),
           itemCount: images.length,
           onPageChanged: (index) => _changeLevel(index + 1),
           itemBuilder: (context, index) {
@@ -221,7 +221,8 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
                       const Positioned(
                         top: 10,
                         right: 20,
-                        child: Icon(Icons.check_circle, color: Colors.green, size: 32),
+                        child: Icon(Icons.check_circle,
+                            color: Colors.green, size: 32),
                       ),
                   ],
                 ),
