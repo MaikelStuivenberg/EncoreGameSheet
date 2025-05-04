@@ -794,10 +794,12 @@ class GamePageState extends State<GamePage> {
   }
 
   Widget showScoreRow() {
-    Map<int, String> autoClosedColumns = {};
-    for (int i = 0; i < card[0].length; i++) {
-      if (card.every((row) => row[i].checked)) {
-        autoClosedColumns[i] = widget.playerName!;
+    if (isOnline) {
+      Map<int, String> autoClosedColumns = {};
+      for (int i = 0; i < card[0].length; i++) {
+        if (card.every((row) => row[i].checked)) {
+          autoClosedColumns[i] = widget.playerName!;
+        }
       }
     }
 
