@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'game_page.dart'; // Import the game page
 import 'achievements_page.dart'; // Import the achievements page
+import 'join_with_code_page.dart';
+import 'host_game_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,6 +50,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(0, 0, 0, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -105,13 +108,63 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: GameButton.primary(
                       'Multiplayer',
-                      () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GamePage(
-                                level: selectedLevel, singlePlayer: false),
+                      () async {
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                           ),
+                          builder: (context) {
+                            return Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GameButton.secondary(
+                                    'Play Offline',
+                                    () {
+                                      Navigator.pop(context); // Close sheet
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => GamePage(
+                                            level: selectedLevel,
+                                            singlePlayer: false,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 12),
+                                  GameButton.primary(
+                                    'Join with Code',
+                                    () {
+                                      Navigator.pop(context); // Close sheet
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => JoinWithCodePage(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 12),
+                                  GameButton.primary(
+                                    'Host Game',
+                                    () {
+                                      Navigator.pop(context); // Close sheet
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => HostGamePage(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

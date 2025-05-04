@@ -42,6 +42,7 @@ class _SettingsPageState extends State<SettingsPage> {
         title: const Text('Settings'),
       ),
       body: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(0, 0, 0, 16),
         child: Container(
           width: double.infinity,
           margin: const EdgeInsets.all(16),
