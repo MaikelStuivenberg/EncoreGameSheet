@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
       
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1.118.0
+        uses: ruby/setup-ruby@v1
         with: 
           ruby-version: '3.1'
           bundler-cache: true
