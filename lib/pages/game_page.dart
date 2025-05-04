@@ -1,4 +1,4 @@
-import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:encore_gamesheet/cards/level_1.dart';
 import 'package:encore_gamesheet/cards/level_2.dart';
 import 'package:encore_gamesheet/cards/level_3.dart';
@@ -1285,20 +1285,14 @@ class GamePageState extends State<GamePage> {
 
   void playWinSound() {
     if (!sounds) return;
-    AssetsAudioPlayer.newPlayer().open(
-      Audio("assets/audios/win.wav"),
-      autoStart: true,
-      showNotification: false,
-    );
+    AudioPlayer().play(AssetSource("assets/audios/win.wav"),
+        mode: PlayerMode.lowLatency);
   }
 
   void playClickSound() {
     if (!sounds) return;
-    AssetsAudioPlayer.newPlayer().open(
-      Audio("assets/audios/click.wav"),
-      autoStart: true,
-      showNotification: false,
-    );
+    AudioPlayer().play(AssetSource("assets/audios/click.wav"),
+        mode: PlayerMode.lowLatency);
   }
 
   // --- Calculate score from serialized state for online results ---
