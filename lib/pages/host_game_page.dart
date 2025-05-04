@@ -109,7 +109,7 @@ class _HostGamePageState extends State<HostGamePage> {
             ),
             const SizedBox(height: 24),
             GameButton.primary(
-              _isLoading ? '' : 'Generate Game Code',
+              _isLoading ? 'Loading...' : 'Generate Game Code',
               _isLoading ? () {} : _createGame,
             ),
             if (_isLoading)

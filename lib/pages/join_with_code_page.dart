@@ -51,12 +51,17 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
           .eq('game_code', code)
           .eq('name', name)
           .maybeSingle();
-      if (existing == null) {
-        await client.from('players').insert({
-          'game_code': code,
-          'name': name,
+      if (existing != null) {
+        setState(() {
+          _isLoading = false;
+          _error = 'This name is already taken in this game. Please choose another.';
         });
+        return;
       }
+      await client.from('players').insert({
+        'game_code': code,
+        'name': name,
+      });
       setState(() {
         _isLoading = false;
       });
@@ -111,7 +116,7 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
             ),
             const SizedBox(height: 24),
             GameButton.primary(
-              _isLoading ? '' : 'Join Game',
+              _isLoading ? 'Loading...' : 'Join Game',
               _isLoading ? () {} : _joinGame,
             ),
             if (_isLoading)

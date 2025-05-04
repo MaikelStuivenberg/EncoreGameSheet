@@ -147,6 +147,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     },
+                                    badgeLabel: 'Beta',
                                   ),
                                   const SizedBox(height: 12),
                                   GameButton.primary(
@@ -160,6 +161,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     },
+                                    badgeLabel: 'Beta',
                                   ),
                                 ],
                               ),

@@ -233,43 +233,47 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
       );
     } else {
       final idx = selectedLevel - 1;
-      return SizedBox(
-        height: 180,
-        child: Hero(
-          tag: images[idx],
-          child: Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                width: MediaQuery.of(context).size.width * 0.8,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 30, 30, 30),
-                  image: DecorationImage(
-                    image: AssetImage(images[idx]),
-                    fit: BoxFit.contain,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              Positioned(
-                bottom: 10,
-                left: 20,
-                child: Text(
-                  ' Level ${idx + 1} ',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    backgroundColor: Colors.black26,
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SizedBox(
+          height: 180,
+          child: Hero(
+            tag: images[idx],
+            child: Stack(
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 30, 30, 30),
+                    image: DecorationImage(
+                      image: AssetImage(images[idx]),
+                      fit: BoxFit.contain,
+                    ),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-              ),
-              const Positioned(
-                top: 10,
-                right: 20,
-                child: Icon(Icons.check_circle, color: Colors.green, size: 32),
-              ),
-            ],
+                Positioned(
+                  bottom: 10,
+                  left: 20,
+                  child: Text(
+                    ' Level ${idx + 1} ',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      backgroundColor: Colors.black26,
+                    ),
+                  ),
+                ),
+                const Positioned(
+                  top: 10,
+                  right: 20,
+                  child:
+                      Icon(Icons.check_circle, color: Colors.green, size: 32),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -283,7 +287,7 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
         title: const Text('Waiting Room'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.fromLTRB(0, 24, 0, 24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -343,15 +347,21 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
                   )),
             const SizedBox(height: 40),
             if (isHost)
-              GameButton.primary(
-                'Start Game',
-                _startGame,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: GameButton.primary(
+                  'Start Game',
+                  _startGame,
+                ),
               ),
             if (!isHost)
-              const Center(
-                child: Text(
-                  'Waiting for the host to start the game...',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Center(
+                  child: Text(
+                    'Waiting for the host to start the game...',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
                 ),
               ),
           ],

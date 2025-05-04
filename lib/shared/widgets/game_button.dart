@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class GameButton extends StatefulWidget {
   final String text;
+  final String? badgeLabel;
   final VoidCallback onPressed;
   final Color color;
   final Color textColor;
@@ -9,6 +10,7 @@ class GameButton extends StatefulWidget {
 
   const GameButton._({
     required this.text,
+    this.badgeLabel,
     required this.onPressed,
     required this.color,
     required this.textColor,
@@ -16,9 +18,10 @@ class GameButton extends StatefulWidget {
   });
 
   factory GameButton.primary(String text, VoidCallback onPressed,
-      {bool isDarkMode = false}) {
+      {String? badgeLabel, bool isDarkMode = false}) {
     return GameButton._(
       text: text,
+      badgeLabel: badgeLabel,
       onPressed: onPressed,
       color: Colors.blue,
       textColor: Colors.white,
@@ -27,9 +30,10 @@ class GameButton extends StatefulWidget {
   }
 
   factory GameButton.secondary(String text, VoidCallback onPressed,
-      {bool isDarkMode = false}) {
+      {String? badgeLabel, bool isDarkMode = false}) {
     return GameButton._(
       text: text,
+      badgeLabel: badgeLabel,
       onPressed: onPressed,
       color: isDarkMode ? Colors.blue[900]! : Colors.white,
       textColor: isDarkMode ? Colors.white : Colors.black,
@@ -81,16 +85,33 @@ class _GameButtonState extends State<GameButton> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (widget.text.isNotEmpty)
-                Text(
-                  widget.text,
-                  style: TextStyle(
-                    decoration: TextDecoration.none,
-                    color: widget.textColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              Text(
+                widget.text,
+                style: TextStyle(
+                  decoration: TextDecoration.none,
+                  color: widget.textColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (widget.badgeLabel != null) ...[
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    widget.badgeLabel!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
+              ],
             ],
           ),
         ),
