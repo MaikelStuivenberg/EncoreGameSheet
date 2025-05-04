@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   shared_preferences: ^2.0.15
-  assets_audio_player: ^3.0.5
+  assets_audio_player: ^3.1.1
   wakelock_plus: ^1.2.8
   path_provider: ^2.0.14
   intl: ^0.19.0
