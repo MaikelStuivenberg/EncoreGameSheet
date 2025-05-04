@@ -165,14 +165,6 @@ class _WaitingRoomPageState extends State<WaitingRoomPage> {
   @override
   void dispose() {
     _channel?.unsubscribe();
-    if (widget.playerName != widget.hostName) {
-      SupabaseClientManager.client
-          .from('players')
-          .delete()
-          .eq('game_code', widget.gameCode)
-          .eq('name', widget.playerName)
-          .then((_) {});
-    }
     super.dispose();
   }
 

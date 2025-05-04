@@ -26,6 +26,7 @@ import '../shared/supabase_client.dart';
 import 'package:encore_gamesheet/shared/widgets/total_score_button.dart';
 import 'package:encore_gamesheet/shared/widgets/settings_button.dart';
 import 'package:encore_gamesheet/shared/widgets/end_game_button.dart';
+import 'package:encore_gamesheet/models/card_box.dart';
 
 class GamePage extends StatefulWidget {
   final int level; // Add level parameter
@@ -84,6 +85,10 @@ class GamePageState extends State<GamePage> {
   Map<int, String> dbClosedColumns = {};
   Map<String, String> dbClosedColors = {};
 
+  // --- Online game finish state ---
+  bool gameOver = false;
+  List<dynamic>? results;
+
   @override
   void initState() {
     super.initState();
@@ -135,6 +140,28 @@ class GamePageState extends State<GamePage> {
 
     // Automatically determine closed columns (A-O) before saving in online games
     await _saveClosedColumns();
+
+    // --- Online: Check if game is finished ---
+    if (isOnline && checkIfGameIsFinished()) {
+      // Gather all players and their scores
+      final players = await SupabaseClientManager.client
+          .from('players')
+          .select('name, game_state')
+          .eq('game_code', widget.gameCode!);
+
+      final resultsList = players.map((p) {
+        return {
+          'name': p['name'],
+          'score': calculateScoreFromState(p['game_state']),
+        };
+      }).toList();
+
+      await SupabaseClientManager.client.from('games').update({
+        'game_over': true,
+        'results': resultsList,
+      }).eq('code', widget.gameCode!);
+      return; // Don't advance turn if game is over
+    }
 
     // Determine the next player
     final idx = onlinePlayers.indexOf(widget.playerName!);
@@ -252,6 +279,8 @@ class GamePageState extends State<GamePage> {
                 ? Map<String, String>.from(newRow['closed_colors'])
                 : {};
             currentTurn = newRow['current_turn'] as String;
+            gameOver = newRow['game_over'] ?? false;
+            results = newRow['results'];
           });
         },
       )
@@ -333,7 +362,7 @@ class GamePageState extends State<GamePage> {
             ),
           ),
         ),
-        if (isOnline && !isMyTurn)
+        if (isOnline && !isMyTurn && !(gameOver && results != null))
           Positioned.fill(
             child: Container(
               color: Colors.black.withOpacity(0.5),
@@ -344,6 +373,127 @@ class GamePageState extends State<GamePage> {
                     color: Colors.white,
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        // --- Custom overlay for online game results ---
+        if (isOnline && gameOver && results != null)
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.85),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: darkMode
+                        ? const Color.fromARGB(255, 30, 30, 30)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Game Over',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Builder(
+                        builder: (context) {
+                          // Sort and show all results
+                          final sorted =
+                              List<Map<String, dynamic>>.from(results!);
+                          sorted
+                              .sort((a, b) => b['score'].compareTo(a['score']));
+                          final winner = sorted.first;
+                          return Column(
+                            children: [
+                              ...sorted.map((r) => Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 6),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: r['name'] == winner['name']
+                                          ? Colors.amber.withOpacity(0.2)
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            if (r['name'] == winner['name'])
+                                              const Icon(Icons.emoji_events,
+                                                  color: Colors.amber,
+                                                  size: 28),
+                                            if (r['name'] == widget.playerName)
+                                              const Icon(Icons.person,
+                                                  color: Colors.blue, size: 24),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              r['name'],
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
+                                                color: r['name'] ==
+                                                        widget.playerName
+                                                    ? Colors.blue
+                                                    : (darkMode
+                                                        ? Colors.white
+                                                        : Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(
+                                          '${r['score']}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: r['name'] == winner['name']
+                                                ? Colors.amber[800]
+                                                : (darkMode
+                                                    ? Colors.white
+                                                    : Colors.black),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                      GameButton.primary(
+                        'Back to Home',
+                        () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                            (route) => false,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -585,7 +735,9 @@ class GamePageState extends State<GamePage> {
                     } else if (!manualClosedColumns.contains(i)) {
                       manualClosedColumns.add(i);
                       if (checkIfGameIsFinished()) {
-                        gameFinished();
+                        if (!isOnline) {
+                          gameFinished();
+                        }
                       }
                     } else {
                       partlyClosedColumns.remove(i);
@@ -644,7 +796,9 @@ class GamePageState extends State<GamePage> {
                     }
 
                     if (checkIfGameIsFinished()) {
-                      gameFinished();
+                      if (!isOnline) {
+                        gameFinished();
+                      }
                     }
                   });
                 }),
@@ -1142,5 +1296,81 @@ class GamePageState extends State<GamePage> {
       autoStart: true,
       showNotification: false,
     );
+  }
+
+  // --- Calculate score from serialized state for online results ---
+  int calculateScoreFromState(Map<String, dynamic> state) {
+    // Reconstruct the card for the correct level
+    List<List<CardBox>> baseCard;
+    switch (widget.level) {
+      case 1:
+        baseCard = Level1Card().getCard();
+        break;
+      case 2:
+        baseCard = Level2Card().getCard();
+        break;
+      case 3:
+        baseCard = Level3Card().getCard();
+        break;
+      case 4:
+        baseCard = Level4Card().getCard();
+        break;
+      case 5:
+        baseCard = Level5Card().getCard();
+        break;
+      case 6:
+        baseCard = Level6Card().getCard();
+        break;
+      case 7:
+        baseCard = Level7Card().getCard();
+        break;
+      default:
+        baseCard = Level1Card().getCard();
+    }
+
+    // Apply checked state from serialized state
+    final checked = state['checked'] as List<dynamic>;
+    for (int i = 0; i < baseCard.length; i++) {
+      for (int j = 0; j < baseCard[i].length; j++) {
+        if (baseCard[i][j] != null && checked[i][j] != null) {
+          baseCard[i][j].checked = checked[i][j] as bool;
+        }
+      }
+    }
+    final int bonusUsedFromState = state['bonusUsed'] as int? ?? 0;
+
+    // --- Closed Columns Points ---
+    int closedColumnsPoints = 0;
+    for (int i = 0; i < CardPoints.first.length; i++) {
+      if (!baseCard.every((row) => row[i] != null && row[i].checked)) continue;
+      closedColumnsPoints += CardPoints.first[i];
+    }
+
+    // --- Closed Colors Points ---
+    int closedColorsPoints = 0;
+    bool isColorClosed(BoxColor color) {
+      return baseCard.every((row) => row
+          .where((element) => element != null && element.color == color)
+          .every((element) => element.checked));
+    }
+
+    if (isColorClosed(BoxColors.greenBox)) closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.yellowBox)) closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.blueBox)) closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.pinkBox)) closedColorsPoints += 5;
+    if (isColorClosed(BoxColors.orangeBox)) closedColorsPoints += 5;
+
+    // --- Bonus Points ---
+    int bonusPoints = maxBonus - bonusUsedFromState;
+
+    // --- Star Points (penalty) ---
+    int starPoints = baseCard
+            .expand((element) => element)
+            .where((element) =>
+                element != null && element.star && !element.checked)
+            .length *
+        2;
+
+    return closedColorsPoints + closedColumnsPoints + bonusPoints - starPoints;
   }
 }
