@@ -1,10 +1,12 @@
 PODS:
+  - app_links (0.0.2):
+    - Flutter
   - assets_audio_player (0.0.1):
     - Flutter
   - assets_audio_player_web (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - in_app_review (0.2.0):
+  - in_app_review (2.0.0):
     - Flutter
   - package_info_plus (0.4.5):
     - Flutter
@@ -20,6 +22,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - app_links (from `.symlinks/plugins/app_links/ios`)
   - assets_audio_player (from `.symlinks/plugins/assets_audio_player/ios`)
   - assets_audio_player_web (from `.symlinks/plugins/assets_audio_player_web/ios`)
   - Flutter (from `Flutter`)
@@ -31,6 +34,8 @@ DEPENDENCIES:
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
   assets_audio_player:
     :path: ".symlinks/plugins/assets_audio_player/ios"
   assets_audio_player_web:
@@ -51,16 +56,17 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock_plus/ios"
 
 SPEC CHECKSUMS:
-  assets_audio_player: edee322b9cb625571b830b35872ead1a295fd917
-  assets_audio_player_web: 19826380c44375761aa0b9053665c1e3fbc3b86b
+  app_links: 76b66b60cc809390ca1ad69bfd66b998d2387ac7
+  assets_audio_player: ae418728ee1b31f11556504fda8034639e20ce44
+  assets_audio_player_web: ce9341347867b03c2eb749d927e18ec009dbe763
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  in_app_review: 318597b3a06c22bb46dc454d56828c85f444f99d
-  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
-  wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
+  in_app_review: 5596fe56fab799e8edb3561c03d053363ab13457
+  package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
+  wakelock_plus: e29112ab3ef0b318e58cfa5c32326458be66b556
 
 PODFILE CHECKSUM: c4c93c5f6502fe2754f48404d3594bf779584011
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

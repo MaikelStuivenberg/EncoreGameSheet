@@ -42,88 +42,93 @@ class _SettingsPageState extends State<SettingsPage> {
         title: const Text('Settings'),
       ),
       body: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(0, 0, 0, 16),
         child: Container(
-          width: double.infinity,
-          margin: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // SHOW CURRENT POINTS
-              SwitchListTile(
-                  value: _showCurrentPoints,
-                  title: const Text("Show current points"),
-                  secondary: const Icon(Icons.score_outlined),
-                  onChanged: (val) async {
-                    setState(() {
-                      _showCurrentPoints = val;
-                    });
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // SHOW CURRENT POINTS
+                SwitchListTile(
+                    value: _showCurrentPoints,
+                    title: const Text("Show current points"),
+                    secondary: const Icon(Icons.score_outlined),
+                    subtitle: const Text(
+                      'This option is only available for offline games.',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    onChanged: (val) async {
+                      setState(() {
+                        _showCurrentPoints = val;
+                      });
 
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool(Settings.showCurrentPoints, val);
-                  }),
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool(Settings.showCurrentPoints, val);
+                    }),
 
-              // DARK MODE
-              SwitchListTile(
-                  value: _useDarkMode,
-                  title: const Text("Dark game sheet"),
-                  secondary: const Icon(Icons.nightlight_round),
-                  onChanged: (val) async {
-                    setState(() {
-                      _useDarkMode = val;
-                    });
+                // DARK MODE
+                SwitchListTile(
+                    value: _useDarkMode,
+                    title: const Text("Dark game sheet"),
+                    secondary: const Icon(Icons.nightlight_round),
+                    onChanged: (val) async {
+                      setState(() {
+                        _useDarkMode = val;
+                      });
 
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool(Settings.darkMode, val);
-                  }),
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool(Settings.darkMode, val);
+                    }),
 
-              // HIGHSCORES
-              // SwitchListTile(
-              //     value: _useHighscore,
-              //     title: Text("Show/Save highscore"),
-              //     secondary: Icon(Icons.emoji_events),
-              //     onChanged: (val) async {
-              //       setState(() {
-              //         _useHighscore = val;
-              //       });
+                // HIGHSCORES
+                // SwitchListTile(
+                //     value: _useHighscore,
+                //     title: Text("Show/Save highscore"),
+                //     secondary: Icon(Icons.emoji_events),
+                //     onChanged: (val) async {
+                //       setState(() {
+                //         _useHighscore = val;
+                //       });
 
-              //       final prefs = await SharedPreferences.getInstance();
-              //       prefs.setBool(Settings.highscore, val);
-              //     }),
+                //       final prefs = await SharedPreferences.getInstance();
+                //       prefs.setBool(Settings.highscore, val);
+                //     }),
 
-              // SOUNDS
-              SwitchListTile(
-                  value: _useSounds,
-                  title: const Text("Use sounds"),
-                  secondary: const Icon(Icons.speaker),
-                  onChanged: (val) async {
-                    setState(() {
-                      _useSounds = val;
-                    });
+                // SOUNDS
+                SwitchListTile(
+                    value: _useSounds,
+                    title: const Text("Use sounds"),
+                    secondary: const Icon(Icons.speaker),
+                    onChanged: (val) async {
+                      setState(() {
+                        _useSounds = val;
+                      });
 
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool(Settings.sounds, val);
-                  }),
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool(Settings.sounds, val);
+                    }),
 
-              // SOUNDS
-              SwitchListTile(
-                  value: _useColorblind,
-                  title: const Text("Use colorblind mode"),
-                  secondary: const Icon(Icons.color_lens),
-                  onChanged: (val) async {
-                    setState(() {
-                      _useColorblind = val;
-                    });
+                // SOUNDS
+                SwitchListTile(
+                    value: _useColorblind,
+                    title: const Text("Use colorblind mode"),
+                    secondary: const Icon(Icons.color_lens),
+                    onChanged: (val) async {
+                      setState(() {
+                        _useColorblind = val;
+                      });
 
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool(Settings.colorblind, val);
-                  }),
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool(Settings.colorblind, val);
+                    }),
 
-              const Spacer(),
+                const SizedBox(height: 24),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: SizedBox(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
                       width: 175,
                       child: GameButton.primary(
                         'Back',
@@ -132,11 +137,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         },
                       ),
                     ),
-                  ),
-                  if (widget.showNewGameButton) ...[
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: SizedBox(
+                    if (widget.showNewGameButton) ...[
+                      const SizedBox(width: 8),
+                      SizedBox(
                         width: 175,
                         child: GameButton.secondary(
                           'New Game',
@@ -151,11 +154,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           },
                         ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
