@@ -610,16 +610,16 @@ class GamePageState extends State<GamePage> {
               color,
               false,
               false,
-              manualClosedColors.contains(color) ||
-                  (dbClosedColors.containsKey(color.textValue) &&
+              manualClosedColors.contains(color)||
+                  (isOnline && dbClosedColors.containsKey(color.textValue) &&
                       !isBoxColorFirstClosedByMe(color)),
-              !manualClosedColors.contains(color) &&
-                  (dbClosedColors.containsKey(color.textValue) &&
+              isBoxColorClosedByMe(color) || 
+                  (isOnline && dbClosedColors.containsKey(color.textValue) &&
                       isBoxColorFirstClosedByMe(color)),
               false,
               "5", () {
             setState(() {
-              if (singlePlayerMode || isOnline) return;
+              if (singlePlayerMode || isOnline || isBoxColorClosedByMe(color)) return;
 
               playClickSound();
               if (manualClosedColors.contains(color)) {
@@ -634,8 +634,8 @@ class GamePageState extends State<GamePage> {
               false,
               false,
               false,
-              manualClosedColors.contains(color) ||
-                  (isBoxColorClosedByMe(color) &&
+              (manualClosedColors.contains(color) && isBoxColorClosedByMe(color)) ||
+                  (isOnline && isBoxColorClosedByMe(color) &&
                       !isBoxColorFirstClosedByMe(color)),
               false,
               "3")
