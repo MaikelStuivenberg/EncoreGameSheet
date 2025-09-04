@@ -610,7 +610,7 @@ class GamePageState extends State<GamePage> {
               color,
               false,
               false,
-              manualClosedColors.contains(color)||
+              manualClosedColors.contains(color) ||
                   (isOnline && dbClosedColors.containsKey(color.textValue) &&
                       !isBoxColorFirstClosedByMe(color)),
               isBoxColorClosedByMe(color) || 

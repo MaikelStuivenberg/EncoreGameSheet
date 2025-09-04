@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../shared/supabase_client.dart';
 import 'dart:math';
 import '../shared/widgets/game_button.dart';
 import '../shared/widgets/game_input.dart';
+import '../constants/settings.dart';
 import 'waiting_room_page.dart';
 
 class HostGamePage extends StatefulWidget {
@@ -15,6 +17,20 @@ class _HostGamePageState extends State<HostGamePage> {
   bool _isLoading = false;
   String? _error;
   int selectedLevel = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastPlayerName();
+  }
+
+  Future<void> _loadLastPlayerName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastPlayerName = prefs.getString(Settings.lastPlayerName);
+    if (lastPlayerName != null && lastPlayerName.isNotEmpty) {
+      _nameController.text = lastPlayerName;
+    }
+  }
 
   String _generateCode([int length = 6]) {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -59,6 +75,11 @@ class _HostGamePageState extends State<HostGamePage> {
         attempts++;
       }
       if (!success) throw Exception('Could not generate a unique code.');
+      
+      // Save the player name for future use
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(Settings.lastPlayerName, name);
+      
       setState(() {
         _isLoading = false;
       });

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../shared/widgets/game_input.dart';
 import '../shared/widgets/game_button.dart';
 import '../shared/supabase_client.dart';
+import '../constants/settings.dart';
 import 'waiting_room_page.dart';
 
 class JoinWithCodePage extends StatefulWidget {
@@ -14,6 +16,20 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
   final TextEditingController _codeController = TextEditingController();
   bool _isLoading = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastPlayerName();
+  }
+
+  Future<void> _loadLastPlayerName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastPlayerName = prefs.getString(Settings.lastPlayerName);
+    if (lastPlayerName != null && lastPlayerName.isNotEmpty) {
+      _nameController.text = lastPlayerName;
+    }
+  }
 
   Future<void> _joinGame() async {
     setState(() {
@@ -30,7 +46,7 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
       return;
     }
     try {
-      // Check if game exists
+      // Check if game exists and is less than 24 hours old
       final client = SupabaseClientManager.client;
       final game = await client
           .from('games')
@@ -43,6 +59,21 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
           _error = 'Game code not found.';
         });
         return;
+      }
+      
+      // Check if game is less than 24 hours old
+      if (game['created_at'] != null) {
+        final gameCreatedAt = DateTime.parse(game['created_at']);
+        final now = DateTime.now();
+        final hoursDifference = now.difference(gameCreatedAt).inHours;
+        
+        if (hoursDifference >= 24) {
+          setState(() {
+            _isLoading = false;
+            _error = 'Game code not found.';
+          });
+          return;
+        }
       }
       // Add player if not already present
       final existing = await client
@@ -62,6 +93,11 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
         'game_code': code,
         'name': name,
       });
+      
+      // Save the player name for future use
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(Settings.lastPlayerName, name);
+      
       setState(() {
         _isLoading = false;
       });

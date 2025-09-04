@@ -11,4 +11,5 @@ class Settings {
   static const String levelsPlayed = 'levelsPlayed';
   static const String gamesWon = 'gamesWon';
   static const String winStreak = 'winStreak';
+  static const String lastPlayerName = 'lastPlayerName';
 }
