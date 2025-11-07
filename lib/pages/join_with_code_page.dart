@@ -48,11 +48,8 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
     try {
       // Check if game exists and is less than 24 hours old
       final client = SupabaseClientManager.client;
-      final game = await client
-          .from('games')
-          .select()
-          .eq('code', code)
-          .maybeSingle();
+      final game =
+          await client.from('games').select().eq('code', code).maybeSingle();
       if (game == null) {
         setState(() {
           _isLoading = false;
@@ -60,13 +57,13 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
         });
         return;
       }
-      
+
       // Check if game is less than 24 hours old
       if (game['created_at'] != null) {
         final gameCreatedAt = DateTime.parse(game['created_at']);
         final now = DateTime.now();
         final hoursDifference = now.difference(gameCreatedAt).inHours;
-        
+
         if (hoursDifference >= 24) {
           setState(() {
             _isLoading = false;
@@ -85,7 +82,8 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
       if (existing != null) {
         setState(() {
           _isLoading = false;
-          _error = 'This name is already taken in this game. Please choose another.';
+          _error =
+              'This name is already taken in this game. Please choose another.';
         });
         return;
       }
@@ -93,11 +91,11 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
         'game_code': code,
         'name': name,
       });
-      
+
       // Save the player name for future use
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(Settings.lastPlayerName, name);
-      
+
       setState(() {
         _isLoading = false;
       });
@@ -173,4 +171,4 @@ class _JoinWithCodePageState extends State<JoinWithCodePage> {
       ),
     );
   }
-} 
+}

@@ -9,7 +9,7 @@ class Level6Card {
     CardBox(BoxColors.greenBox),
     CardBox(BoxColors.yellowBox),
     CardBox(BoxColors.yellowBox),
-    CardBox(BoxColors.yellowBox,true),
+    CardBox(BoxColors.yellowBox, true),
     CardBox(BoxColors.greenBox),
     CardBox(BoxColors.greenBox),
     CardBox(BoxColors.pinkBox),

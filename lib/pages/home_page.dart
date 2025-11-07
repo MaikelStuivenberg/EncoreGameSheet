@@ -1,5 +1,6 @@
 import 'package:encore_gamesheet/pages/settings_page.dart';
 import 'package:encore_gamesheet/shared/widgets/game_button.dart';
+import 'package:encore_gamesheet/shared/widgets/banner_ad_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'game_page.dart'; // Import the game page
@@ -50,7 +51,8 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+        minimum: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -68,21 +70,20 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
               ),
             ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Carousel(
-                  onImageTap: (level) {
-                    setState(() {
-                      selectedLevel = level;
-                    });
-                  },
-                  onPageChanged: (level) {
-                    setState(() {
-                      selectedLevel = level;
-                    });
-                  },
-                ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Carousel(
+                onImageTap: (level) {
+                  setState(() {
+                    selectedLevel = level;
+                  });
+                },
+                onPageChanged: (level) {
+                  setState(() {
+                    selectedLevel = level;
+                  });
+                },
               ),
             ),
             Padding(
@@ -112,7 +113,8 @@ class _HomePageState extends State<HomePage> {
                         showModalBottomSheet(
                           context: context,
                           shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            borderRadius:
+                                BorderRadius.vertical(top: Radius.circular(20)),
                           ),
                           builder: (context) {
                             return Padding(
@@ -143,7 +145,8 @@ class _HomePageState extends State<HomePage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => JoinWithCodePage(),
+                                          builder: (context) =>
+                                              JoinWithCodePage(),
                                         ),
                                       );
                                     },
@@ -173,6 +176,11 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
+            ),
+            const Spacer(),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: BannerAdWidget(),
             ),
           ],
         ),

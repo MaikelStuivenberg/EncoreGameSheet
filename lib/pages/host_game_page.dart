@@ -75,11 +75,11 @@ class _HostGamePageState extends State<HostGamePage> {
         attempts++;
       }
       if (!success) throw Exception('Could not generate a unique code.');
-      
+
       // Save the player name for future use
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(Settings.lastPlayerName, name);
-      
+
       setState(() {
         _isLoading = false;
       });

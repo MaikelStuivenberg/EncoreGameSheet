@@ -9,5 +9,6 @@ class BoxColor {
 
   String textValue;
 
-  BoxColor(this.color, this.colorText, this.dmColor, this.dmColorText, this.textValue);
+  BoxColor(this.color, this.colorText, this.dmColor, this.dmColorText,
+      this.textValue);
 }

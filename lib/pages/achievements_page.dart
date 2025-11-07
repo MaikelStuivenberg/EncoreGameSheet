@@ -46,7 +46,9 @@ class _AchievementsPageState extends State<AchievementsPage> {
   Future<void> loadLevelsPlayed() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      levelsPlayed = (prefs.getStringList(Settings.levelsPlayed) ?? []).map((e) => int.parse(e)).toSet();
+      levelsPlayed = (prefs.getStringList(Settings.levelsPlayed) ?? [])
+          .map((e) => int.parse(e))
+          .toSet();
     });
   }
 

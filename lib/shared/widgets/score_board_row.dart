@@ -25,9 +25,8 @@ class ScoreBoardRow extends StatelessWidget {
       children.add(Container(
         margin: const EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: Icon(iconPrefix,
-            color: darkMode
-                ? const Color.fromARGB(225, 30, 30, 30)
-                : Colors.black,
+            color:
+                darkMode ? const Color.fromARGB(225, 30, 30, 30) : Colors.black,
             size: 20),
       ));
     }
@@ -104,4 +103,4 @@ class ScoreBoardRow extends StatelessWidget {
       ),
     );
   }
-} 
+}
