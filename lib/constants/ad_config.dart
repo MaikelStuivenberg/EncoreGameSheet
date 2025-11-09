@@ -2,7 +2,7 @@ import 'dart:io';
 
 class AdConfig {
   // Set this to false for production builds
-  static const bool isTestMode = true;
+  static const bool isTestMode = false;
 
   // Test Ad Unit IDs (provided by Google for testing)
   static const String _testAndroidBannerAdUnitId =
